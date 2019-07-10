@@ -46,6 +46,8 @@ import net.sourceforge.plantuml.eclipse.utils.DiagramTextIteratorProvider;
 import net.sourceforge.plantuml.eclipse.utils.DiagramTextProvider;
 import net.sourceforge.plantuml.eclipse.utils.DiagramTextProvider2;
 import net.sourceforge.plantuml.eclipse.utils.PlantumlConstants;
+import net.sourceforge.plantuml.util.DiagramModus;
+import net.sourceforge.plantuml.util.DiagramModusProvider;
 
 public abstract class AbstractDiagramSourceView extends ViewPart {
 
@@ -431,19 +433,23 @@ public abstract class AbstractDiagramSourceView extends ViewPart {
 		if (activePart != null) {
 			final DiagramTextProvider[] diagramTextProviders = Activator.getDefault().getDiagramTextProviders(true);
 			final Map<String, Object> markerAttributes = new HashMap<String, Object>();
+			final DiagramModus modus = DiagramModusProvider.getModusProvider().getModus();
 			for (int i = 0; i < diagramTextProviders.length; i++) {
 				final DiagramTextProvider diagramTextProvider = diagramTextProviders[i];
-				if (supportsPart(diagramTextProvider, activePart) && (selection == null || diagramTextProvider.supportsSelection(selection))) {
-					String diagramText = null;
-					if (activePart instanceof IEditorPart && diagramTextProvider instanceof DiagramTextProvider2) {
-						markerAttributes.clear();
-						diagramText = ((DiagramTextProvider2) diagramTextProvider).getDiagramText((IEditorPart) activePart, selection, markerAttributes);
-					} else {
-						diagramText = getDiagramText(diagramTextProvider, activePart, selection);
-					}
-					if (diagramText != null) {
-						updateDiagramText(diagramText, path, markerAttributes);
-						return true;
+				DiagramModus currentModus = diagramTextProvider.getModus();
+				if(modus.equals(currentModus)) {
+					if (supportsPart(diagramTextProvider, activePart) && (selection == null || diagramTextProvider.supportsSelection(selection))) {
+						String diagramText = null;
+						if (activePart instanceof IEditorPart && diagramTextProvider instanceof DiagramTextProvider2) {
+							markerAttributes.clear();
+							diagramText = ((DiagramTextProvider2) diagramTextProvider).getDiagramText((IEditorPart) activePart, selection, markerAttributes);
+						} else {
+							diagramText = getDiagramText(diagramTextProvider, activePart, selection);
+						}
+						if (diagramText != null) {
+							updateDiagramText(diagramText, path, markerAttributes);
+							return true;
+						}
 					}
 				}
 			}

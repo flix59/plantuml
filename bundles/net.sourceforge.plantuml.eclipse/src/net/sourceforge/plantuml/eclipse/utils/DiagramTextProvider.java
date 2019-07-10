@@ -4,6 +4,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 
+import net.sourceforge.plantuml.util.DiagramModus;
+
 /**
  * Functionality for generating diagrams from contents of active editors,
  * optionally based on editor selection
@@ -11,6 +13,14 @@ import org.eclipse.ui.IViewPart;
  *
  */
 public interface DiagramTextProvider {
+	
+	/**
+	 * Gives DiagramTextProvider an Modus default is class diagram
+	 * @return the modus from the Provider
+	 */
+	public default DiagramModus getModus() {
+		return DiagramModus.CLASSDIAGRAMM;
+	}
 
 	/**
 	 * Tells if the specified editor (or its input) is supported

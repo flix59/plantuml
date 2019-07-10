@@ -17,11 +17,14 @@ public interface PlantumlConstants {
 	public static final String SAVE_MENU = "Save";
 	public static final String EXPORT_MENU = "Export";
 	public static final String PRINT_MENU = "Print";
+	public static final String CHANGE_MODUS_MENU_CLASS = "Change Modus to Sequenzediagramm";
+	public static final String CHANGE_MODUS_MENU_SEQ = "Change Modus to Classdiagramm";
 
 	public static final String ZOOM_IN_BUTTON = "Zoom in";
 	public static final String ZOOM_OUT_BUTTON = "Zoom out";
 	public static final String FIT_CANVAS_BUTTON = "Fit to canvas";
 	public static final String SHOW_ORIGINAL_BUTTON = "Show original";
+	public static final String CHANGE_MODUS_BUTTON = "Change Modus";
 	
 	public static final String PIN_TO_BUTTON = "Pin view to editor";
 	public static final String SPAWN_BUTTON = "Open another view";
