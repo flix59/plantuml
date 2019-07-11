@@ -33,7 +33,6 @@ import net.sourceforge.plantuml.eclipse.Activator;
 import net.sourceforge.plantuml.eclipse.imagecontrol.ILinkSupport;
 import net.sourceforge.plantuml.eclipse.imagecontrol.ImageControl;
 import net.sourceforge.plantuml.eclipse.imagecontrol.jface.MenuSupport;
-import net.sourceforge.plantuml.eclipse.imagecontrol.jface.actions.ChangeModi;
 import net.sourceforge.plantuml.eclipse.imagecontrol.jface.actions.ZoomAction;
 import net.sourceforge.plantuml.eclipse.imagecontrol.jface.actions.ZoomFitAction;
 import net.sourceforge.plantuml.eclipse.imagecontrol.jface.actions.ZoomResetAction;
@@ -49,6 +48,7 @@ import net.sourceforge.plantuml.eclipse.views.actions.CopySourceAction;
 import net.sourceforge.plantuml.eclipse.views.actions.ExportAction;
 import net.sourceforge.plantuml.eclipse.views.actions.PrintAction;
 import net.sourceforge.plantuml.eclipse.views.actions.SaveAction;
+import net.sourceforge.plantuml.util.DiagramModusProvider;
 
 /**
  *
@@ -183,9 +183,9 @@ public class PlantUmlView extends AbstractDiagramSourceView implements ILinkSupp
 				return getCurrentImageControl();
 			};
 		});
-		menuSupport.addMenuAction(new CopySourceAction(display, diagram));
+		menuSupport.addMenuAction((Action) this.changeModusAction);
 		menuSupport.addMenuAction(new CopyAsciiAction(display, diagram));
-		menuSupport.addMenuAction(new ChangeModusMenuAction());
+		menuSupport.addMenuAction(new ChangeModusMenuAction(this.getDiagramModusProvider()));
 		menuSupport.addMenuAction(new SaveAction(null, diagram) {
 			@Override
 			public ImageControl getControl() {
@@ -206,7 +206,7 @@ public class PlantUmlView extends AbstractDiagramSourceView implements ILinkSupp
 		});
 	}
 
-	private IAction zoomInAction, zoomOutAction, fitCanvasAction, showOriginalAction, changeModiAction;
+	private IAction zoomInAction, zoomOutAction, fitCanvasAction, showOriginalAction, changeModusAction = new ChangeModusMenuAction(this.getDiagramModusProvider());
 
 	private final float ZOOMIN_RATE = 1.1f; //
 	private final float ZOOMOUT_RATE = 0.9f; //
@@ -223,14 +223,7 @@ public class PlantUmlView extends AbstractDiagramSourceView implements ILinkSupp
 	protected void makeActions() {
 		super.makeActions();
 		
-		changeModiAction = new ChangeModi(null) {
-			@Override
-			public ImageControl getControl() {
-				return getCurrentImageControl();
-			};
-		};
-		
-		changeModiAction.setToolTipText(PlantumlConstants.CHANGE_MODUS_BUTTON);
+		changeModusAction.setToolTipText(PlantumlConstants.CHANGE_MODUS_BUTTON);
 		
 		zoomInAction = new ZoomAction(null, ZOOMIN_RATE) {
 			@Override
@@ -264,6 +257,14 @@ public class PlantUmlView extends AbstractDiagramSourceView implements ILinkSupp
 		};
 		showOriginalAction.setToolTipText(PlantumlConstants.SHOW_ORIGINAL_BUTTON);
 	}
+	
+	public void disableModusButtons() {
+		this.changeModusAction.setEnabled(false);
+	}
+	
+	public void enableModusButtons() {
+		this.changeModusAction.setEnabled(true);		
+	}
 
 	@Override
 	protected void contributeToActionBars() {
@@ -287,7 +288,7 @@ public class PlantUmlView extends AbstractDiagramSourceView implements ILinkSupp
 	}
 
 	protected void addZoomActions(final IContributionManager toolBarManager) {
-		addActions(toolBarManager,changeModiAction, zoomInAction, zoomOutAction, fitCanvasAction, showOriginalAction);
+		addActions(toolBarManager,changeModusAction, zoomInAction, zoomOutAction, fitCanvasAction, showOriginalAction);
 	}
 
 	/**

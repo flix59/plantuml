@@ -20,19 +20,22 @@ public class ChangeModusMenuAction extends Action implements Observer {
 	private DiagramModusProvider modusProvider;
 
 
-	    public ChangeModusMenuAction() {
-			modusProvider = DiagramModusProvider.getModusProvider();
+	    public ChangeModusMenuAction(DiagramModusProvider modusProvider) {
+			this.modusProvider = modusProvider;
 			this.modusProvider.addObserver(this);
 			this.setText(PlantumlConstants.CHANGE_MODUS_MENU_CLASS);
+			setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusClass.png")));
 		}
 	    
 	    private void changeModus() {
 	    	System.out.println("got notified in Menu: " + modusProvider.getModus());
 	    	if(modusProvider.getModus() == DiagramModus.CLASSDIAGRAMM) {
 				this.setText(PlantumlConstants.CHANGE_MODUS_MENU_SEQ);
+				setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusSeq.png")));
 				modusProvider.setModus(DiagramModus.SEQUENZDIAGRAMM);
 			} else {
 				this.setText(PlantumlConstants.CHANGE_MODUS_MENU_CLASS);
+				setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusClass.png")));
 				modusProvider.setModus(DiagramModus.CLASSDIAGRAMM);
 			}
 	    }
@@ -40,8 +43,10 @@ public class ChangeModusMenuAction extends Action implements Observer {
 		private void updateModus() {
 			if(modusProvider.getModus() == DiagramModus.CLASSDIAGRAMM) {
 				this.setText(PlantumlConstants.CHANGE_MODUS_MENU_CLASS);
+				setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusClass.png")));
 			} else {
 				this.setText(PlantumlConstants.CHANGE_MODUS_MENU_SEQ);
+				setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusSeq.png")));
 			}
 		}
 

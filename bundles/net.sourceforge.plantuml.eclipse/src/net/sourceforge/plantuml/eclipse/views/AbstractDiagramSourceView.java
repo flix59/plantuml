@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -49,11 +51,17 @@ import net.sourceforge.plantuml.eclipse.utils.PlantumlConstants;
 import net.sourceforge.plantuml.util.DiagramModus;
 import net.sourceforge.plantuml.util.DiagramModusProvider;
 
-public abstract class AbstractDiagramSourceView extends ViewPart {
+public abstract class AbstractDiagramSourceView extends ViewPart implements Observer {
 
 	private String pinnedToId = null;
 	private IEditorPart pinnedTo = null;
-	private String initialDiagramSource = null;
+	private String initialDiagramSource = null;	
+	private DiagramModusProvider modusProvider;
+	
+	public AbstractDiagramSourceView() {
+		 modusProvider = new DiagramModusProvider();
+		 modusProvider.addObserver(this);
+	}
 
 	@Override
 	public void saveState(final IMemento memento) {
@@ -69,6 +77,10 @@ public abstract class AbstractDiagramSourceView extends ViewPart {
 			pinnedToId = memento.getString("pinnedTo");
 			initialDiagramSource = memento.getString("initialDiagramSource");
 		}
+	}
+
+	public DiagramModusProvider getDiagramModusProvider() {
+		return modusProvider;
 	}
 
 	public boolean isLinkedToActivePart() {
@@ -338,6 +350,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart {
 	private final DiagramTextChangedListener diagramTextChangedListener = new DiagramTextChangedListener();
 	private IWorkbenchPart currentPart;
 
+
 	private void handlePartChange(final IWorkbenchPart part) {
 		if (currentPart != null) {
 			currentPart.removePropertyListener(diagramTextChangedListener);
@@ -382,8 +395,27 @@ public abstract class AbstractDiagramSourceView extends ViewPart {
 			}
 		};
 	}
+	
+	private currentKonfiguration currentKonfig;
+	
+	private class currentKonfiguration{
+		private IWorkbenchPart lastPart;
+		private boolean lastForce;
+		private ISelection selection;
+		private currentKonfiguration( boolean force,  IWorkbenchPart part, ISelection selection) {
+			this.lastForce = force;
+			this.lastPart = part;
+			this.selection = selection;
+		}
+	}
+	
+	@Override
+	public void update(Observable o, Object arg){
+		this.updateDiagramText(currentKonfig.lastForce, currentKonfig.lastPart, currentKonfig.selection);
+	}
 
 	protected void updateDiagramText(final boolean force, final IWorkbenchPart part, ISelection selection) {
+		currentKonfig = new currentKonfiguration(force, part, selection);
 		final IWorkbenchPart activePart = (part != null ? part : (isLinkedToActivePart() ? getSite().getPage().getActivePart() : null));
 		if (force || activePart != currentPart) {
 			if (activePart == null || acceptPart(activePart)) {
@@ -433,7 +465,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart {
 		if (activePart != null) {
 			final DiagramTextProvider[] diagramTextProviders = Activator.getDefault().getDiagramTextProviders(true);
 			final Map<String, Object> markerAttributes = new HashMap<String, Object>();
-			final DiagramModus modus = DiagramModusProvider.getModusProvider().getModus();
+			final DiagramModus modus = this.getDiagramModusProvider().getModus();
 			for (int i = 0; i < diagramTextProviders.length; i++) {
 				final DiagramTextProvider diagramTextProvider = diagramTextProviders[i];
 				DiagramModus currentModus = diagramTextProvider.getModus();

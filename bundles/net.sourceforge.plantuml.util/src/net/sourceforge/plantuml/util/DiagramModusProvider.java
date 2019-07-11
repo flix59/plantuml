@@ -5,18 +5,9 @@ import java.util.Observable;
 public class DiagramModusProvider extends Observable {
 	
 	private DiagramModus modus;
-	private static DiagramModusProvider modusProvider;
 	
-	private DiagramModusProvider() {
+	public DiagramModusProvider() {
 		this.modus = DiagramModus.CLASSDIAGRAMM;
-		this.notifyObservers();
-	}
-	
-	public static DiagramModusProvider getModusProvider() {
-		if(modusProvider == null) {
-			modusProvider = new DiagramModusProvider();
-		}
-		return modusProvider;
 	}
 	
 	public void setModus(DiagramModus modus) {
