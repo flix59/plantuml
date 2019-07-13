@@ -7,8 +7,8 @@
 
       <diagramTextProvider
             id="net.sourceforge.plantuml.pcm.PcmClassDiagramTextProvider"
-            providerClass="net.sourceforge.plantuml.pcm.PcmDiagramTextProvider"
-            label="Class diagrams generated from PCM models"
+            providerClass="net.sourceforge.plantuml.pcm.RepositoryDiagramTextProvider"
+            label="Class diagrams generated from Repository models"
             >
       </diagramTextProvider>
    </extension>

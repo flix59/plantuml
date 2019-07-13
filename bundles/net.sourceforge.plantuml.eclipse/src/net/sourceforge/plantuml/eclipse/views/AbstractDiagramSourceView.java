@@ -396,26 +396,9 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		};
 	}
 	
-	private currentKonfiguration currentKonfig;
-	
-	private class currentKonfiguration{
-		private IWorkbenchPart lastPart;
-		private boolean lastForce;
-		private ISelection selection;
-		private currentKonfiguration( boolean force,  IWorkbenchPart part, ISelection selection) {
-			this.lastForce = force;
-			this.lastPart = part;
-			this.selection = selection;
-		}
-	}
-	
-	@Override
-	public void update(Observable o, Object arg){
-		this.updateDiagramText(currentKonfig.lastForce, currentKonfig.lastPart, currentKonfig.selection);
-	}
+
 
 	protected void updateDiagramText(final boolean force, final IWorkbenchPart part, ISelection selection) {
-		currentKonfig = new currentKonfiguration(force, part, selection);
 		final IWorkbenchPart activePart = (part != null ? part : (isLinkedToActivePart() ? getSite().getPage().getActivePart() : null));
 		if (force || activePart != currentPart) {
 			if (activePart == null || acceptPart(activePart)) {
@@ -461,7 +444,26 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		return null;
 	}
 
+	private currentKonfiguration currentKonfig;
+	
+	private class currentKonfiguration{
+		private IWorkbenchPart lastPart;
+		private IPath path;
+		private ISelection selection;
+		private currentKonfiguration(  IWorkbenchPart activePart,  ISelection selection, final IPath path) {
+			this.path = path;
+			this.lastPart = activePart;
+			this.selection = selection;
+		}
+	}
+	
+	@Override
+	public void update(Observable o, Object arg){
+		this.updateDiagramText(currentKonfig.lastPart, currentKonfig.selection, currentKonfig.path);
+	}
+	
 	private boolean updateDiagramText(final IWorkbenchPart activePart, final ISelection selection, final IPath path) {
+		currentKonfig = new currentKonfiguration(activePart, selection, path);
 		if (activePart != null) {
 			final DiagramTextProvider[] diagramTextProviders = Activator.getDefault().getDiagramTextProviders(true);
 			final Map<String, Object> markerAttributes = new HashMap<String, Object>();
