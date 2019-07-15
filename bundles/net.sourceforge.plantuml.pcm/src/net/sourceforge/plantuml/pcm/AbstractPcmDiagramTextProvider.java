@@ -23,6 +23,7 @@ public abstract class AbstractPcmDiagramTextProvider extends  AbstractEcoreClass
 
 	@Override
 	public boolean supportsPath(IPath path) {
+		System.out.println(this.getClass().toString() + ": " + path.toString());
 		if(pathEndings == null) {
 			this.initEndings();
 		}

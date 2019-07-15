@@ -12,5 +12,13 @@
             >
       </diagramTextProvider>
    </extension>
+   <extension
+         point="net.sourceforge.plantuml.eclipse.diagramTextProvider">
+      <diagramTextProvider
+            id="net.sourceforge.plantuml.pcm.PcmClassDiagramTextProvider"
+            label="Class diagrams generated from System models"
+            providerClass="net.sourceforge.plantuml.pcm.SystemDiagramTextProvider">
+      </diagramTextProvider>
+   </extension>
 
 </plugin>

@@ -23,8 +23,8 @@ public class ChangeModusMenuAction extends Action implements Observer {
 	    public ChangeModusMenuAction(DiagramModusProvider modusProvider) {
 			this.modusProvider = modusProvider;
 			this.modusProvider.addObserver(this);
-			this.setText(PlantumlConstants.CHANGE_MODUS_MENU_CLASS);
-			setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusClass.png")));
+			this.setText(PlantumlConstants.CHANGE_MODUS_MENU_SEQ);
+			setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusSeq.png")));
 		}
 	    
 	    private void changeModus() {

@@ -475,8 +475,10 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 					if (supportsPart(diagramTextProvider, activePart) && (selection == null || diagramTextProvider.supportsSelection(selection))) {
 						String diagramText = null;
 						if (activePart instanceof IEditorPart && diagramTextProvider instanceof DiagramTextProvider2) {
-							markerAttributes.clear();
-							diagramText = ((DiagramTextProvider2) diagramTextProvider).getDiagramText((IEditorPart) activePart, selection, markerAttributes);
+							if(((DiagramTextProvider2)diagramTextProvider).supportsPath(path)) {
+								markerAttributes.clear();
+								diagramText = ((DiagramTextProvider2) diagramTextProvider).getDiagramText((IEditorPart) activePart, selection, markerAttributes);
+							}
 						} else {
 							diagramText = getDiagramText(diagramTextProvider, activePart, selection);
 						}

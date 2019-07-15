@@ -183,7 +183,7 @@ public class PlantUmlView extends AbstractDiagramSourceView implements ILinkSupp
 				return getCurrentImageControl();
 			};
 		});
-		menuSupport.addMenuAction((Action) this.changeModusAction);
+		// menuSupport.addMenuAction((Action) this.changeModusAction);
 		menuSupport.addMenuAction(new CopyAsciiAction(display, diagram));
 		menuSupport.addMenuAction(new ChangeModusMenuAction(this.getDiagramModusProvider()));
 		menuSupport.addMenuAction(new SaveAction(null, diagram) {
