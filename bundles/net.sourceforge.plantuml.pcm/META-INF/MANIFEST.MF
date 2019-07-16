@@ -11,5 +11,8 @@ Import-Package: net.sourceforge.plantuml.eclipse.utils,
  net.sourceforge.plantuml.util,
  org.eclipse.core.runtime;version="3.5.0",
  org.eclipse.emf.ecore,
+ org.eclipse.emf.edit.domain,
  org.eclipse.jface.viewers,
+ org.eclipse.m2m.qvt.oml.blackbox.java,
+ org.eclipse.m2m.qvt.oml.runtime.util,
  org.eclipse.ui

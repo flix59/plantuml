@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
 
 public class SystemDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 
@@ -40,6 +41,18 @@ public class SystemDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 	@Override
 	public String getDiagramText(IPath path) {
 		return testDiagram;
+	}
+	
+	@Override
+	public boolean supportsPath(IPath path) {
+		System.out.println(this.getClass().toString() + ": " + path.toString());
+		if(pathEndings == null) {
+			this.initEndings();
+		}
+		return pathEndings.stream().anyMatch(ending-> ending.equals(path.getFileExtension()));
+	}	@Override
+	public boolean supportsView(final IViewPart viewPart) {
+		return true;
 	}
 	
 	@Override 

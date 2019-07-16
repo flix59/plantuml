@@ -1,9 +1,11 @@
 package net.sourceforge.plantuml.pcm;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.edit.domain.IEditingDomainProvider;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
 
 import net.sourceforge.plantuml.eclipse.utils.DiagramTextProvider2;
 import net.sourceforge.plantuml.ecore.AbstractEcoreClassDiagramTextProvider;
@@ -18,17 +20,17 @@ public abstract class AbstractPcmDiagramTextProvider extends  AbstractEcoreClass
 	public DiagramModus getModus() {
 		return modus;
 	}	
+	public AbstractPcmDiagramTextProvider() {
+		super(IEditingDomainProvider.class);
+	}
+	
+	public AbstractPcmDiagramTextProvider(final Class<?> editorType) {
+		super(editorType);
+	}
 	
 	public abstract void initEndings();
 
-	@Override
-	public boolean supportsPath(IPath path) {
-		System.out.println(this.getClass().toString() + ": " + path.toString());
-		if(pathEndings == null) {
-			this.initEndings();
-		}
-		return pathEndings.stream().anyMatch(ending-> ending.equals(path.getFileExtension()));
-	}
+
 
 
 	@Override
