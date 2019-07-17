@@ -463,6 +463,10 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 	}
 	
 	private boolean updateDiagramText(final IWorkbenchPart activePart, final ISelection selection, final IPath path) {
+		System.out.println("i" + selection);
+		/*if(selection == null) {
+			return false;
+		}*/
 		currentKonfig = new currentKonfiguration(activePart, selection, path);
 		if (activePart != null) {
 			final DiagramTextProvider[] diagramTextProviders = Activator.getDefault().getDiagramTextProviders(true);
@@ -474,6 +478,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 				if(modus.equals(currentModus)) {
 					if (supportsPart(diagramTextProvider, activePart) && (selection == null || diagramTextProvider.supportsSelection(selection))) {
 						String diagramText = null;
+						System.out.println("selection not null: " + (selection != null));
 						if (activePart instanceof IEditorPart && diagramTextProvider instanceof DiagramTextProvider2) {
 							if(((DiagramTextProvider2)diagramTextProvider).supportsPath(path)) {
 								markerAttributes.clear();

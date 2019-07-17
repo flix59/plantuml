@@ -1,5 +1,7 @@
 package net.sourceforge.plantuml.pcm;
 
+import java.util.ArrayList;
+
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -10,6 +12,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.palladiosimulator.pcm.system.presentation.SystemEditor;
 
 public class SystemDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 
@@ -39,26 +42,23 @@ public class SystemDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 	}
 
 	@Override
+	public void initPartTypes() {
+		// TODO Auto-generated method stub
+		this.partTypes = new ArrayList<Class<?>>();
+		this.partTypes.add(SystemEditor.class);
+	}
+
+	@Override
 	public String getDiagramText(IPath path) {
 		return testDiagram;
 	}
-	
-	@Override
-	public boolean supportsPath(IPath path) {
-		System.out.println(this.getClass().toString() + ": " + path.toString());
-		if(pathEndings == null) {
-			this.initEndings();
-		}
-		return pathEndings.stream().anyMatch(ending-> ending.equals(path.getFileExtension()));
-	}	@Override
-	public boolean supportsView(final IViewPart viewPart) {
-		return true;
-	}
+
 	
 	@Override 
 	public String getDiagramText(IEditorPart editorPart, ISelection selection, Map<String, Object> markerAttributes) {
 		// here happens the transformation
 		return testDiagram;
 	}
+
 
 }

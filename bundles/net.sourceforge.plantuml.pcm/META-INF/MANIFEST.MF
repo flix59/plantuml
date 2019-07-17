@@ -5,14 +5,24 @@ Bundle-SymbolicName: net.sourceforge.plantuml.pcm;singleton:=true
 Bundle-Version: 1.1.23
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: net.sourceforge.plantuml.pcm
-Import-Package: net.sourceforge.plantuml.eclipse.utils,
+Import-Package: de.uka.ipd.sdq.pcm.gmf.repository.part,
+ de.uka.ipd.sdq.pcm.gmf.seff.part,
+ net.sourceforge.plantuml.eclipse.utils,
  net.sourceforge.plantuml.ecore,
  net.sourceforge.plantuml.text,
  net.sourceforge.plantuml.util,
+ org.eclipse.core.resources,
  org.eclipse.core.runtime;version="3.5.0",
+ org.eclipse.emf.common.notify,
+ org.eclipse.emf.common.util,
  org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.resource,
+ org.eclipse.emf.ecore.util,
  org.eclipse.emf.edit.domain,
  org.eclipse.jface.viewers,
  org.eclipse.m2m.qvt.oml.blackbox.java,
  org.eclipse.m2m.qvt.oml.runtime.util,
- org.eclipse.ui
+ org.eclipse.ui,
+ org.palladiosimulator.pcm.repository.presentation,
+ org.palladiosimulator.pcm.repository.util,
+ org.palladiosimulator.pcm.system.presentation
