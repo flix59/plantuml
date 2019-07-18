@@ -54,22 +54,7 @@ public abstract class AbstractPcmDiagramTextProvider extends AbstractEcoreClassD
 	public boolean supportsPath(IPath path) {
 		return pathEndings.stream().anyMatch(ending -> ending.equals(path.getFileExtension()));
 	}
-	@Override
-	public boolean supportsSelection(ISelection selection) {
-		//TODO FIX
-		/*IStructuredSelection strucSel = (IStructuredSelection) selection;
-		Object sel = strucSel.getFirstElement();
-		if (sel == null) {
-			return false;
-		}
-		String scn = sel.getClass().getSimpleName();
-		if (scn.equals("RepositoryDemandingSEFF")) {
-			System.out.println("buja");
-			return true;
-		};
-		return false;*/
-		return true;
-	}
+
 
 	@Override
 	public abstract String getDiagramText(IPath path);
