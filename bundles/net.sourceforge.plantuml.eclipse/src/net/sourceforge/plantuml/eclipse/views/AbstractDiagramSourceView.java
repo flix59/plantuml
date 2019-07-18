@@ -55,12 +55,12 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 
 	private String pinnedToId = null;
 	private IEditorPart pinnedTo = null;
-	private String initialDiagramSource = null;	
+	private String initialDiagramSource = null;
 	private DiagramModusProvider modusProvider;
-	
+
 	public AbstractDiagramSourceView() {
-		 modusProvider = new DiagramModusProvider();
-		 modusProvider.addObserver(this);
+		modusProvider = new DiagramModusProvider();
+		modusProvider.addObserver(this);
 	}
 
 	@Override
@@ -129,6 +129,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 			public boolean isEnabled() {
 				return isLinkedToActivePart();
 			}
+
 			@Override
 			public void run() {
 				pinnedTo = (isChecked() && currentPart instanceof IEditorPart ? (IEditorPart) currentPart : null);
@@ -159,7 +160,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		spawnAction.setImageDescriptor(ImageDescriptor.createFromFile(PlantumlConstants.class, "/icons/spawn.png"));
 
 		// action to start or stop the generation of the actual diagram
-		toggleAction = 	new Action() {
+		toggleAction = new Action() {
 			@Override
 			public void run() {
 				if (isChecked()) {
@@ -173,7 +174,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 	}
 
 	protected void addActions(final IContributionManager manager, final IAction... actions) {
-		if (! manager.isEmpty()) {
+		if (!manager.isEmpty()) {
 			manager.add(new Separator());
 		}
 		for (final IAction action : actions) {
@@ -212,7 +213,8 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		if (pinnedTo != null && pinnedTo == part) {
 			return true;
 		}
-		if (part instanceof IEditorPart && pinnedToId != null && acceptEditorInput(pinnedToId, ((IEditorPart) part).getEditorInput())) {
+		if (part instanceof IEditorPart && pinnedToId != null
+				&& acceptEditorInput(pinnedToId, ((IEditorPart) part).getEditorInput())) {
 			pinnedTo = (IEditorPart) part;
 			pinnedToId = null;
 			return true;
@@ -249,6 +251,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 	}
 
 	protected abstract void updateDiagramText(String text, IPath path, Map<String, Object> markerAttributes);
+
 	public abstract String getDiagramText();
 
 	private boolean visible = false;
@@ -276,7 +279,8 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		}
 
 		@Override
-		public void partOpened(final IWorkbenchPartReference partRef) {}
+		public void partOpened(final IWorkbenchPartReference partRef) {
+		}
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
@@ -291,10 +295,12 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		}
 
 		@Override
-		public void partBroughtToTop(final IWorkbenchPartReference partRef) {}
+		public void partBroughtToTop(final IWorkbenchPartReference partRef) {
+		}
 
 		@Override
-		public void partInputChanged(final IWorkbenchPartReference partRef) {}
+		public void partInputChanged(final IWorkbenchPartReference partRef) {
+		}
 
 		@Override
 		public void partHidden(final IWorkbenchPartReference partRef) {
@@ -304,26 +310,32 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		}
 
 		@Override
-		public void partDeactivated(final IWorkbenchPartReference partRef) {}
+		public void partDeactivated(final IWorkbenchPartReference partRef) {
+		}
 
 		@Override
-		public void partClosed(final IWorkbenchPartReference partRef) {}
+		public void partClosed(final IWorkbenchPartReference partRef) {
+		}
 	};
 
-	private class DiagramTextChangedListener implements IPropertyListener, ISelectionListener, ISelectionChangedListener {
+	private class DiagramTextChangedListener
+			implements IPropertyListener, ISelectionListener, ISelectionChangedListener {
 
 		@Override
 		public void propertyChanged(final Object source, final int propId) {
-			if (source == currentPart && propId == IEditorPart.PROP_DIRTY && currentPart instanceof IEditorPart && (! ((IEditorPart) currentPart).isDirty())) {
+			if (source == currentPart && propId == IEditorPart.PROP_DIRTY && currentPart instanceof IEditorPart
+					&& (!((IEditorPart) currentPart).isDirty())) {
 				diagramChanged(currentPart, null);
 			}
 		}
+
 		@Override
 		public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
 			if (part == currentPart) {
 				diagramChanged(currentPart, selection);
 			}
 		}
+
 		protected void diagramChanged(final IWorkbenchPart editor, final ISelection selection) {
 			if (isLinkingActive()) {
 				updateDiagramText(true, editor, selection);
@@ -332,7 +344,8 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 
 		@Override
 		public void selectionChanged(final SelectionChangedEvent event) {
-			if ((! (event.getSource() instanceof DiagramTextProvider)) || Activator.getDefault().isEnabled((DiagramTextProvider) event.getSource())) {
+			if ((!(event.getSource() instanceof DiagramTextProvider))
+					|| Activator.getDefault().isEnabled((DiagramTextProvider) event.getSource())) {
 				final ISelection selection = event.getSelection();
 				if (selection instanceof IStructuredSelection) {
 					final Object o = ((IStructuredSelection) selection).getFirstElement();
@@ -349,7 +362,6 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 
 	private final DiagramTextChangedListener diagramTextChangedListener = new DiagramTextChangedListener();
 	private IWorkbenchPart currentPart;
-
 
 	private void handlePartChange(final IWorkbenchPart part) {
 		if (currentPart != null) {
@@ -368,11 +380,14 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		final ISelectionProvider selectionProvider = editor.getSite().getSelectionProvider();
 		if (selectionProvider != null) {
 			for (final DiagramTextProvider diagramTextProvider : diagramTextProviders) {
-				if (diagramTextProvider instanceof DiagramTextIteratorProvider && diagramTextProvider.supportsEditor(editor)) {
-					final Iterator<ISelection> selections = ((DiagramTextIteratorProvider) diagramTextProvider).getDiagramText(editor);
+				if (diagramTextProvider instanceof DiagramTextIteratorProvider
+						&& diagramTextProvider.supportsEditor(editor)) {
+					final Iterator<ISelection> selections = ((DiagramTextIteratorProvider) diagramTextProvider)
+							.getDiagramText(editor);
 					while (selections.hasNext()) {
 						final ISelection selection = selections.next();
-						final ActionContributionItem action = new ActionContributionItem(createEditorSelectionAction(editor, selectionProvider, selection));
+						final ActionContributionItem action = new ActionContributionItem(
+								createEditorSelectionAction(editor, selectionProvider, selection));
 						actions.add(action);
 					}
 				}
@@ -381,7 +396,8 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		return actions;
 	}
 
-	private Action createEditorSelectionAction(final IEditorPart editor, final ISelectionProvider selectionProvider, final ISelection selection) {
+	private Action createEditorSelectionAction(final IEditorPart editor, final ISelectionProvider selectionProvider,
+			final ISelection selection) {
 		return new Action(selection.toString()) {
 			@Override
 			public void run() {
@@ -395,17 +411,17 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 			}
 		};
 	}
-	
-
 
 	protected void updateDiagramText(final boolean force, final IWorkbenchPart part, ISelection selection) {
-		final IWorkbenchPart activePart = (part != null ? part : (isLinkedToActivePart() ? getSite().getPage().getActivePart() : null));
+		final IWorkbenchPart activePart = (part != null ? part
+				: (isLinkedToActivePart() ? getSite().getPage().getActivePart() : null));
 		if (force || activePart != currentPart) {
 			if (activePart == null || acceptPart(activePart)) {
 				IPath path = null;
 				handlePartChange(activePart);
 				if (activePart != null) {
-					if (activePart instanceof IEditorPart && ((IEditorPart) activePart).getEditorInput() instanceof IFileEditorInput) {
+					if (activePart instanceof IEditorPart
+							&& ((IEditorPart) activePart).getEditorInput() instanceof IFileEditorInput) {
 						path = ((IFileEditorInput) ((IEditorPart) activePart).getEditorInput()).getFile().getFullPath();
 					}
 					if (selection == null) {
@@ -435,7 +451,8 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		return false;
 	}
 
-	protected String getDiagramText(final DiagramTextProvider diagramTextProvider, final IWorkbenchPart part, final ISelection selection) {
+	protected String getDiagramText(final DiagramTextProvider diagramTextProvider, final IWorkbenchPart part,
+			final ISelection selection) {
 		if (part instanceof IViewPart) {
 			return diagramTextProvider.getDiagramText((IViewPart) part, selection);
 		} else if (part instanceof IEditorPart) {
@@ -445,28 +462,25 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 	}
 
 	private currentKonfiguration currentKonfig;
-	
-	private class currentKonfiguration{
+
+	private class currentKonfiguration {
 		private IWorkbenchPart lastPart;
 		private IPath path;
 		private ISelection selection;
-		private currentKonfiguration(  IWorkbenchPart activePart,  ISelection selection, final IPath path) {
+
+		private currentKonfiguration(IWorkbenchPart activePart, ISelection selection, final IPath path) {
 			this.path = path;
 			this.lastPart = activePart;
 			this.selection = selection;
 		}
 	}
-	
+
 	@Override
-	public void update(Observable o, Object arg){
+	public void update(Observable o, Object arg) {
 		this.updateDiagramText(currentKonfig.lastPart, currentKonfig.selection, currentKonfig.path);
 	}
-	
+
 	private boolean updateDiagramText(final IWorkbenchPart activePart, final ISelection selection, final IPath path) {
-		System.out.println("i" + selection);
-		/*if(selection == null) {
-			return false;
-		}*/
 		currentKonfig = new currentKonfiguration(activePart, selection, path);
 		if (activePart != null) {
 			final DiagramTextProvider[] diagramTextProviders = Activator.getDefault().getDiagramTextProviders(true);
@@ -475,14 +489,16 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 			for (int i = 0; i < diagramTextProviders.length; i++) {
 				final DiagramTextProvider diagramTextProvider = diagramTextProviders[i];
 				DiagramModus currentModus = diagramTextProvider.getModus();
-				if(modus.equals(currentModus)) {
-					if (supportsPart(diagramTextProvider, activePart) && (selection == null || diagramTextProvider.supportsSelection(selection))) {
+				if (modus.equals(currentModus)) {
+					if (supportsPart(diagramTextProvider, activePart)
+							&& (selection == null || diagramTextProvider.supportsSelection(selection))) {
 						String diagramText = null;
 						System.out.println("selection not null: " + (selection != null));
 						if (activePart instanceof IEditorPart && diagramTextProvider instanceof DiagramTextProvider2) {
-							if(((DiagramTextProvider2)diagramTextProvider).supportsPath(path)) {
+							if (((DiagramTextProvider2) diagramTextProvider).supportsPath(path)) {
 								markerAttributes.clear();
-								diagramText = ((DiagramTextProvider2) diagramTextProvider).getDiagramText((IEditorPart) activePart, selection, markerAttributes);
+								diagramText = ((DiagramTextProvider2) diagramTextProvider)
+										.getDiagramText((IEditorPart) activePart, selection, markerAttributes);
 							}
 						} else {
 							diagramText = getDiagramText(diagramTextProvider, activePart, selection);
@@ -496,5 +512,62 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 			}
 		}
 		return false;
+	}
+
+	private boolean updateDiagrammTextVorschlag(final IWorkbenchPart activePart, final ISelection selection, final IPath path) {
+		currentKonfig = new currentKonfiguration(activePart, selection, path);
+		if (activePart == null) {
+			return false;
+		}
+
+		final DiagramTextProvider[] diagramTextProviders = Activator.getDefault().getDiagramTextProviders(true);
+		final Map<String, Object> markerAttributes = new HashMap<String, Object>();
+		for (int i = 0; i < diagramTextProviders.length; i++) {
+			String diagramText = null;
+			switch(checkProvider(activePart,selection,path,diagramTextProviders[i])) {
+				case NON:
+					break;
+				case TEXTPROVIDER:
+					diagramText = getDiagramText(diagramTextProviders[i], activePart, selection);
+					break;
+				case TEXTPROVIDER2:
+					markerAttributes.clear();
+					diagramText = ((DiagramTextProvider2) diagramTextProviders[i]).getDiagramText((IEditorPart) activePart,
+							selection, markerAttributes);
+					break;			
+			}
+			if (diagramText != null) {
+				updateDiagramText(diagramText, path, markerAttributes);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private AcceptedTransformation checkProvider(final IWorkbenchPart activePart, final ISelection selection,
+			final IPath path, DiagramTextProvider diagramTextProvider) {
+		if (checkSelected (activePart, selection, path, diagramTextProvider)) {
+			System.out.println("selection not null: " + (selection != null));
+			if (activePart instanceof IEditorPart && diagramTextProvider instanceof DiagramTextProvider2) {
+				if (((DiagramTextProvider2) diagramTextProvider).supportsPath(path)) {
+					return AcceptedTransformation.TEXTPROVIDER2;
+				}
+			} else {
+				return AcceptedTransformation.TEXTPROVIDER;
+			}
+		}
+		return AcceptedTransformation.NON;
+	}
+	
+	private boolean checkSelected(final IWorkbenchPart activePart, final ISelection selection,
+			final IPath path, DiagramTextProvider diagramTextProvider) {
+		final DiagramModus modus = this.getDiagramModusProvider().getModus();
+		DiagramModus currentModus = diagramTextProvider.getModus();
+		return modus.equals(currentModus) && supportsPart(diagramTextProvider, activePart)
+		&& (selection == null || diagramTextProvider.supportsSelection(selection));
+	}
+
+	private enum AcceptedTransformation {
+		NON, TEXTPROVIDER2, TEXTPROVIDER,
 	}
 }
