@@ -108,8 +108,7 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 	}
 
 	private String transform() {
-		// QvtoTransformationHelper helper = new
-		// QvtoTransformationHelper(EcoreUtil.getURI(null).trimFragment());
+		TransformationExecutor executor = new TransformationExecutor();
 		return testDiagram;
 	}
 

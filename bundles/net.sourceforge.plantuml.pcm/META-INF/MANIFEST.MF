@@ -4,7 +4,8 @@ Bundle-Name: UML2 PlantUML mapping
 Bundle-SymbolicName: net.sourceforge.plantuml.pcm;singleton:=true
 Bundle-Version: 1.1.23
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: net.sourceforge.plantuml.pcm
+Export-Package: net.sourceforge.plantuml.pcm,
+ net.sourceforge.plantuml.pcm.transformations
 Import-Package: de.uka.ipd.sdq.pcm.gmf.repository.part,
  de.uka.ipd.sdq.pcm.gmf.seff.part,
  net.sourceforge.plantuml.eclipse.utils,
@@ -27,3 +28,7 @@ Import-Package: de.uka.ipd.sdq.pcm.gmf.repository.part,
  org.palladiosimulator.pcm.repository.presentation,
  org.palladiosimulator.pcm.repository.util,
  org.palladiosimulator.pcm.system.presentation
+Require-Bundle: org.palladiosimulator.pcm;bundle-version="4.1.0",
+ org.eclipse.acceleo.common;bundle-version="3.7.8",
+ org.eclipse.acceleo.model;bundle-version="3.7.8",
+ org.eclipse.acceleo.engine

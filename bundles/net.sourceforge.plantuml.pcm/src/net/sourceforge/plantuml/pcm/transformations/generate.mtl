@@ -1,0 +1,10 @@
+[comment encoding = UTF-8 /]
+[module generate('http://palladiosimulator.org/PalladioComponentModel/Repository/5.2')]
+
+
+[template public generateElement(aBasicComponent : BasicComponent)]
+@startuml
+[comment @main/]
+	test [aBasicComponent.serviceEffectSpecifications__BasicComponent.basicComponent_ServiceEffectSpecification/]
+@enduml 
+[/template]

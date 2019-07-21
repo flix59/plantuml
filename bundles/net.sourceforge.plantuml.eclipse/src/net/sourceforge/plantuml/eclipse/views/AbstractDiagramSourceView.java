@@ -1,12 +1,15 @@
 package net.sourceforge.plantuml.eclipse.views;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -430,10 +433,10 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 							selection = selectionProvider.getSelection();
 						}
 					}
-					if (updateDiagramText(activePart, selection, path)) {
+					if (updateDiagramText(new SelectionModel(activePart, selection, path))) {
 						return;
 					}
-					if (selection != null && updateDiagramText(activePart, null, path)) {
+					if (selection != null && updateDiagramText(new SelectionModel(activePart, null, path))) {
 						return;
 					}
 				}
@@ -461,27 +464,19 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		return null;
 	}
 
-	private currentKonfiguration currentKonfig;
-
-	private class currentKonfiguration {
-		private IWorkbenchPart lastPart;
-		private IPath path;
-		private ISelection selection;
-
-		private currentKonfiguration(IWorkbenchPart activePart, ISelection selection, final IPath path) {
-			this.path = path;
-			this.lastPart = activePart;
-			this.selection = selection;
-		}
-	}
+	private SelectionModel currentKonfig;
 
 	@Override
 	public void update(Observable o, Object arg) {
-		this.updateDiagramText(currentKonfig.lastPart, currentKonfig.selection, currentKonfig.path);
+		this.updateDiagramText(currentKonfig);
 	}
 
-	private boolean updateDiagramText(final IWorkbenchPart activePart, final ISelection selection, final IPath path) {
-		currentKonfig = new currentKonfiguration(activePart, selection, path);
+	private boolean updateDiagramText(SelectionModel selected) {
+		currentKonfig = selected;
+
+		final IWorkbenchPart activePart = selected.activePart;
+		final ISelection selection = selected.selection;
+		final IPath path = selected.path;
 		if (activePart != null) {
 			final DiagramTextProvider[] diagramTextProviders = Activator.getDefault().getDiagramTextProviders(true);
 			final Map<String, Object> markerAttributes = new HashMap<String, Object>();
@@ -514,60 +509,61 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		return false;
 	}
 
-	private boolean updateDiagrammTextVorschlag(final IWorkbenchPart activePart, final ISelection selection, final IPath path) {
-		currentKonfig = new currentKonfiguration(activePart, selection, path);
-		if (activePart == null) {
+	private class SelectionModel {
+		final IWorkbenchPart activePart;
+		final ISelection selection;
+		final IPath path;
+
+		public SelectionModel(final IWorkbenchPart activePart, final ISelection selection, final IPath path) {
+			this.activePart = activePart;
+			this.selection = selection;
+			this.path = path;
+		}
+	}
+
+	private boolean updateDiagramTextVorschlag(SelectionModel selected) {
+		if (selected.activePart == null) {
 			return false;
 		}
-
-		final DiagramTextProvider[] diagramTextProviders = Activator.getDefault().getDiagramTextProviders(true);
+		currentKonfig = selected;
 		final Map<String, Object> markerAttributes = new HashMap<String, Object>();
-		for (int i = 0; i < diagramTextProviders.length; i++) {
-			String diagramText = null;
-			switch(checkProvider(activePart,selection,path,diagramTextProviders[i])) {
-				case NON:
-					break;
-				case TEXTPROVIDER:
-					diagramText = getDiagramText(diagramTextProviders[i], activePart, selection);
-					break;
-				case TEXTPROVIDER2:
-					markerAttributes.clear();
-					diagramText = ((DiagramTextProvider2) diagramTextProviders[i]).getDiagramText((IEditorPart) activePart,
-							selection, markerAttributes);
-					break;			
+		final List<DiagramTextProvider> digramTextProviderList = Arrays.asList(Activator.getDefault().getDiagramTextProviders(true));
+		List<DiagramTextProvider> possibleProviders = digramTextProviderList.stream()
+				.filter(provider -> checkSelected(provider, selected)).collect(Collectors.toList());
+		String diagramText = generateText(possibleProviders, selected, markerAttributes);
+		if (diagramText != null) {
+			updateDiagramText(diagramText, selected.path, markerAttributes);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	private String generateText(List<DiagramTextProvider> providers, SelectionModel selected,
+			Map<String, Object> markerAttributes) {
+		for (DiagramTextProvider provider : providers) {
+			if (isDTP2SupportsPart(provider, selected)) {
+				markerAttributes.clear();
+				return ((DiagramTextProvider2) provider).getDiagramText((IEditorPart) selected.activePart,
+						selected.selection, markerAttributes);
+			} else {
+				return getDiagramText(provider, selected.activePart, selected.selection);
 			}
-			if (diagramText != null) {
-				updateDiagramText(diagramText, path, markerAttributes);
+		}
+		return null;
+	}	
+	private boolean isDTP2SupportsPart(DiagramTextProvider provider, SelectionModel selected) {
+		if (selected.activePart instanceof IEditorPart && provider instanceof DiagramTextProvider2) {
+			if(((DiagramTextProvider2) provider).supportsPath(selected.path)){
 				return true;
 			}
 		}
 		return false;
 	}
-
-	private AcceptedTransformation checkProvider(final IWorkbenchPart activePart, final ISelection selection,
-			final IPath path, DiagramTextProvider diagramTextProvider) {
-		if (checkSelected (activePart, selection, path, diagramTextProvider)) {
-			System.out.println("selection not null: " + (selection != null));
-			if (activePart instanceof IEditorPart && diagramTextProvider instanceof DiagramTextProvider2) {
-				if (((DiagramTextProvider2) diagramTextProvider).supportsPath(path)) {
-					return AcceptedTransformation.TEXTPROVIDER2;
-				}
-			} else {
-				return AcceptedTransformation.TEXTPROVIDER;
-			}
-		}
-		return AcceptedTransformation.NON;
-	}
-	
-	private boolean checkSelected(final IWorkbenchPart activePart, final ISelection selection,
-			final IPath path, DiagramTextProvider diagramTextProvider) {
+	private boolean checkSelected(DiagramTextProvider diagramTextProvider, SelectionModel selected) {
 		final DiagramModus modus = this.getDiagramModusProvider().getModus();
 		DiagramModus currentModus = diagramTextProvider.getModus();
-		return modus.equals(currentModus) && supportsPart(diagramTextProvider, activePart)
-		&& (selection == null || diagramTextProvider.supportsSelection(selection));
+		return modus.equals(currentModus) && supportsPart(diagramTextProvider, selected.activePart)
+				&& (selected.selection == null || diagramTextProvider.supportsSelection(selected.selection));
 	}
 
-	private enum AcceptedTransformation {
-		NON, TEXTPROVIDER2, TEXTPROVIDER,
-	}
 }
