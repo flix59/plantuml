@@ -108,7 +108,6 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 	}
 
 	private String transform() {
-		TransformationExecutor executor = new TransformationExecutor();
 		return testDiagram;
 	}
 
