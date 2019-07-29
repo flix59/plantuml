@@ -4,14 +4,15 @@ Bundle-Name: UML2 PlantUML mapping
 Bundle-SymbolicName: net.sourceforge.plantuml.pcm;singleton:=true
 Bundle-Version: 1.1.23
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: net.sourceforge.plantuml.pcm,
- net.sourceforge.plantuml.pcm.transformations
+Export-Package: net.sourceforge.plantuml.pcm
 Import-Package: de.uka.ipd.sdq.pcm.gmf.repository.part,
  de.uka.ipd.sdq.pcm.gmf.seff.part,
  net.sourceforge.plantuml.eclipse.utils,
  net.sourceforge.plantuml.ecore,
  net.sourceforge.plantuml.text,
  net.sourceforge.plantuml.util,
+ org.eclipse.acceleo.module.palladio.basiccomponent,
+ org.eclipse.acceleo.module.palladio.common,
  org.eclipse.core.resources,
  org.eclipse.core.runtime;version="3.5.0",
  org.eclipse.emf.common.notify,
@@ -29,7 +30,19 @@ Import-Package: de.uka.ipd.sdq.pcm.gmf.repository.part,
  org.palladiosimulator.pcm.repository.util,
  org.palladiosimulator.pcm.system.presentation
 Require-Bundle: org.palladiosimulator.pcm;bundle-version="4.1.0",
- org.eclipse.acceleo.common;bundle-version="3.7.8",
- org.eclipse.acceleo.model;bundle-version="3.7.8",
- org.eclipse.acceleo.engine,
- com.google.guava;bundle-version="21.0.0"
+ org.junit,
+ org.junit.jupiter.api,
+ org.junit.jupiter.engine,
+ org.junit.jupiter.migrationsupport,
+ org.junit.jupiter.params,
+ org.junit.platform.commons,
+ org.junit.platform.engine,
+ org.junit.platform.launcher,
+ org.junit.platform.runner,
+ org.junit.platform.suite.api,
+ org.junit.vintage.engine,
+ org.hamcrest.core,
+ org.opentest4j,
+ org.apiguardian,
+ org.eclipse.acceleo.engine;bundle-version="3.7.8"
+Automatic-Module-Name: net.sourceforge.plantuml.pcm

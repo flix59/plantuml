@@ -1,32 +1,35 @@
 package net.sourceforge.plantuml.pcm;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.acceleo.engine.service.AbstractAcceleoGenerator;
+import org.eclipse.acceleo.module.palladio.basiccomponent.BasicComponentGenerator;
+import org.eclipse.acceleo.module.palladio.common.GeneratePalladio;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewPart;
+import org.palladiosimulator.pcm.repository.BasicComponent;
+import org.palladiosimulator.pcm.repository.impl.BasicComponentImpl;
 import org.palladiosimulator.pcm.repository.presentation.RepositoryEditor;
+import org.palladiosimulator.pcm.seff.impl.ResourceDemandingSEFFImpl;
 
 import de.uka.ipd.sdq.pcm.gmf.seff.part.SeffDiagramEditor;
 import de.uka.ipd.sdq.pcm.gmf.repository.part.PalladioComponentModelRepositoryDiagramEditor;
-// import org.palladiosimulator.pcm.repository.util.RepositoryResourceImpl;
-import org.eclipse.m2m.qvt.oml.blackbox.java.Parameter;
-import org.eclipse.m2m.qvt.oml.util.*;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
-import org.eclipse.m2m.qvt.oml.TransformationExecutor;
 
 //import org.palladiosimulator.pcm.repository.util.RepositoryResourceImpl;
 
@@ -77,17 +80,79 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		if (!(sel instanceof EObject) || isEcoreClassDiagramObject(sel)) {
 			return null;
 		}
-		return getDiagramText((EObject) sel);
+		if (sel instanceof ResourceDemandingSEFFImpl) {
+			return getDiagramText((ResourceDemandingSEFFImpl) sel);
+		}	
+		if (sel instanceof BasicComponentImpl) {
+			return getDiagramText((BasicComponentImpl) sel);
+		}
+		return "@startuml \n facade -> facade : test \n @enduml";
 	}
 
 	private String getDiagramText(TreeIterator<Notifier> allContents) {
 		// TODO Auto-generated method stub
 		return transform();
 	}
+	
 
-	private String getDiagramText(EObject sel) {
-		sel.eClass(); // TODO Auto-generated method stub
-		return transform();
+	private String getDiagramText(BasicComponentImpl sel) {
+		File targetFolder = new File("transformationen");
+		try {
+		BasicComponentGenerator generator = new BasicComponentGenerator(sel,targetFolder,new ArrayList());
+		String text = transform(generator, targetFolder);
+		return text;
+		} catch (IOException e) {
+		e.printStackTrace();
+	}
+		return null;
+	}
+
+	private String getDiagramText(ResourceDemandingSEFFImpl sel) {
+		EObject repository = sel.eContainer();
+		File targetFolder = new File("transformationen");
+		List<String> arguments = new ArrayList<String>();
+		BasicComponent component = (BasicComponent) sel.eContainer();
+		arguments.add(component.getId());
+		arguments.add(sel.getId());
+		try {
+			GeneratePalladio generator = new GeneratePalladio(repository, targetFolder, arguments);
+			String text = transform(generator, targetFolder);
+			return text;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String transform(AbstractAcceleoGenerator generator, File directory) {
+		try {
+			generator.doGenerate(new BasicMonitor());
+			File transformationFile = new File(directory.getAbsolutePath() + "/generatedTransformation");
+			String text = readString(transformationFile);
+			return text;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String readString(File transformationFile) {
+		try {
+			FileInputStream fis = new FileInputStream(transformationFile);
+			 StringBuilder sb = new StringBuilder();
+		      String line;
+		      BufferedReader br = new BufferedReader( new InputStreamReader(fis, "UTF-8" ));
+		      while(( line = br.readLine()) != null ) {
+		         sb.append( line );
+		         sb.append( '\n' );
+		      }
+		      return sb.toString();
+		} catch ( IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
@@ -98,12 +163,14 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		if (sel == null) {
 			return false;
 		}
-		String scn = sel.getClass().getSimpleName();
-		if (scn.equals("ResourceDemandingSEFFImpl")) {
+		if (sel instanceof ResourceDemandingSEFFImpl) {
 			System.out.println("buja");
 			return true;
 		}
-		;
+
+		if (sel instanceof BasicComponentImpl) {
+			return true;
+		}
 		return false;
 	}
 

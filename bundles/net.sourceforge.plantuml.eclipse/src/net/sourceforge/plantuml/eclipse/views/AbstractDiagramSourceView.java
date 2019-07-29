@@ -484,7 +484,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 			for (int i = 0; i < diagramTextProviders.length; i++) {
 				final DiagramTextProvider diagramTextProvider = diagramTextProviders[i];
 				DiagramModus currentModus = diagramTextProvider.getModus();
-				if (modus.equals(currentModus)) {
+				//if (modus.equals(currentModus)) {
 					if (supportsPart(diagramTextProvider, activePart)
 							&& (selection == null || diagramTextProvider.supportsSelection(selection))) {
 						String diagramText = null;
@@ -503,7 +503,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 							return true;
 						}
 					}
-				}
+				//}
 			}
 		}
 		return false;
