@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.gmf.runtime.notation.impl.NodeImpl;
 import org.palladiosimulator.pcm.repository.BasicComponent;
 import org.palladiosimulator.pcm.repository.impl.BasicComponentImpl;
 import org.palladiosimulator.pcm.repository.presentation.RepositoryEditor;
@@ -73,7 +74,11 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 	@Override
 	public String getDiagramText(IEditorPart editorPart, ISelection selection, Map<String, Object> markerAttributes) {
 		if (!(selection instanceof IStructuredSelection)) {
-			return getDiagramText(((IEditingDomainProvider) editorPart).getEditingDomain().getResourceSet().getAllContents());
+			return "@startuml \n @enduml";	
+		} else {
+		
+		if(selection instanceof PalladioComponentModelRepositoryDiagramEditor) {
+			
 		}
 
 		final Object sel = ((IStructuredSelection) selection).getFirstElement();
@@ -86,6 +91,8 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		if (sel instanceof BasicComponentImpl) {
 			return getDiagramText((BasicComponentImpl) sel);
 		}
+		}
+		
 		return "@startuml \n facade -> facade : test \n @enduml";
 	}
 
@@ -157,7 +164,6 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 
 	@Override
 	public boolean supportsSelection(ISelection selection) {
-		// TODO FIX
 		IStructuredSelection strucSel = (IStructuredSelection) selection;
 		Object sel = strucSel.getFirstElement();
 		if (sel == null) {
@@ -171,6 +177,9 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		if (sel instanceof BasicComponentImpl) {
 			return true;
 		}
+		/*if(selection instanceof CustomResourceDemandingSEFFEditPart) {
+			return true;
+		}*/
 		return false;
 	}
 
