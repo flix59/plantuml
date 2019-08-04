@@ -170,16 +170,15 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 			return false;
 		}
 		if (sel instanceof ResourceDemandingSEFFImpl) {
-			System.out.println("buja");
 			return true;
 		}
 
 		if (sel instanceof BasicComponentImpl) {
 			return true;
 		}
-		/*if(selection instanceof CustomResourceDemandingSEFFEditPart) {
+		if(sel instanceof NodeImpl) {
 			return true;
-		}*/
+		}
 		return false;
 	}
 
