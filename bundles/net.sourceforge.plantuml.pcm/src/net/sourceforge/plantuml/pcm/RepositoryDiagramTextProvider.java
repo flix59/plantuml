@@ -74,43 +74,35 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 	@Override
 	public String getDiagramText(IEditorPart editorPart, ISelection selection, Map<String, Object> markerAttributes) {
 		if (!(selection instanceof IStructuredSelection)) {
-			return "@startuml \n @enduml";	
+			return "@startuml \n title No valid selection \n @enduml";
 		} else {
-		
-		if(selection instanceof PalladioComponentModelRepositoryDiagramEditor) {
-			
+			final Object sel = ((IStructuredSelection) selection).getFirstElement();
+			if (!(sel instanceof EObject) || isEcoreClassDiagramObject(sel)) {
+				return null;
+			}
+			if (sel instanceof ResourceDemandingSEFFImpl) {
+				return getDiagramText((ResourceDemandingSEFFImpl) sel);
+			}
+			if (sel instanceof BasicComponentImpl) {
+				return getDiagramText((BasicComponentImpl) sel);
+			}
 		}
-
-		final Object sel = ((IStructuredSelection) selection).getFirstElement();
-		if (!(sel instanceof EObject) || isEcoreClassDiagramObject(sel)) {
-			return null;
-		}
-		if (sel instanceof ResourceDemandingSEFFImpl) {
-			return getDiagramText((ResourceDemandingSEFFImpl) sel);
-		}	
-		if (sel instanceof BasicComponentImpl) {
-			return getDiagramText((BasicComponentImpl) sel);
-		}
-		}
-		
 		return "@startuml \n facade -> facade : test \n @enduml";
 	}
 
 	private String getDiagramText(TreeIterator<Notifier> allContents) {
-		// TODO Auto-generated method stub
 		return transform();
 	}
-	
 
 	private String getDiagramText(BasicComponentImpl sel) {
 		File targetFolder = new File("transformationen");
 		try {
-		BasicComponentGenerator generator = new BasicComponentGenerator(sel,targetFolder,new ArrayList());
-		String text = transform(generator, targetFolder);
-		return text;
+			BasicComponentGenerator generator = new BasicComponentGenerator(sel, targetFolder, new ArrayList());
+			String text = transform(generator, targetFolder);
+			return text;
 		} catch (IOException e) {
-		e.printStackTrace();
-	}
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -130,7 +122,7 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		}
 		return null;
 	}
-	
+
 	private String transform(AbstractAcceleoGenerator generator, File directory) {
 		try {
 			generator.doGenerate(new BasicMonitor());
@@ -138,25 +130,23 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 			String text = readString(transformationFile);
 			return text;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	private String readString(File transformationFile) {
 		try {
 			FileInputStream fis = new FileInputStream(transformationFile);
-			 StringBuilder sb = new StringBuilder();
-		      String line;
-		      BufferedReader br = new BufferedReader( new InputStreamReader(fis, "UTF-8" ));
-		      while(( line = br.readLine()) != null ) {
-		         sb.append( line );
-		         sb.append( '\n' );
-		      }
-		      return sb.toString();
-		} catch ( IOException e) {
-			// TODO Auto-generated catch block
+			StringBuilder sb = new StringBuilder();
+			String line;
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+			return sb.toString();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -176,7 +166,7 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		if (sel instanceof BasicComponentImpl) {
 			return true;
 		}
-		if(sel instanceof NodeImpl) {
+		if (sel instanceof NodeImpl) {
 			return true;
 		}
 		return false;
