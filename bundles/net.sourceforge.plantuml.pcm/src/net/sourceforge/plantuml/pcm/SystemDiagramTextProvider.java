@@ -48,15 +48,15 @@ public class SystemDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 		this.partTypes.add(SystemEditor.class);
 	}
 
-	@Override
-	public String getDiagramText(IPath path) {
-		return testDiagram;
-	}
-
-	
 	@Override 
 	public String getDiagramText(IEditorPart editorPart, ISelection selection, Map<String, Object> markerAttributes) {
 		// here happens the transformation
+		return testDiagram;
+	}
+
+	@Override
+	public String getDiagramText(IPath path) {
+		// TODO Auto-generated method stub
 		return testDiagram;
 	}
 

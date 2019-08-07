@@ -471,7 +471,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		this.updateDiagramText(currentKonfig);
 	}
 
-	private boolean updateDiagramText(SelectionModel selected) {
+	private boolean updateDiagramTextVorschlag(SelectionModel selected) {
 		currentKonfig = selected;
 
 		final IWorkbenchPart activePart = selected.activePart;
@@ -484,26 +484,23 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 			for (int i = 0; i < diagramTextProviders.length; i++) {
 				final DiagramTextProvider diagramTextProvider = diagramTextProviders[i];
 				DiagramModus currentModus = diagramTextProvider.getModus();
-				//if (modus.equals(currentModus)) {
-					if (supportsPart(diagramTextProvider, activePart)
-							&& (selection == null || diagramTextProvider.supportsSelection(selection))) {
-						String diagramText = null;
-						System.out.println("selection not null: " + (selection != null));
-						if (activePart instanceof IEditorPart && diagramTextProvider instanceof DiagramTextProvider2) {
-							if (((DiagramTextProvider2) diagramTextProvider).supportsPath(path)) {
-								markerAttributes.clear();
-								diagramText = ((DiagramTextProvider2) diagramTextProvider)
-										.getDiagramText((IEditorPart) activePart, selection, markerAttributes);
-							}
-						} else {
-							diagramText = getDiagramText(diagramTextProvider, activePart, selection);
-						}
-						if (diagramText != null) {
-							updateDiagramText(diagramText, path, markerAttributes);
-							return true;
-						}
+				if (supportsPart(diagramTextProvider, activePart)
+						&& (selection == null || diagramTextProvider.supportsSelection(selection))) {
+					String diagramText = null;
+					System.out.println("selection not null: " + (selection != null));
+					if (activePart instanceof IEditorPart && diagramTextProvider instanceof DiagramTextProvider2) {
+						markerAttributes.clear();
+						diagramText = ((DiagramTextProvider2) diagramTextProvider)
+								.getDiagramText((IEditorPart) activePart, selection, markerAttributes);
+
+					} else {
+						diagramText = getDiagramText(diagramTextProvider, activePart, selection);
 					}
-				//}
+					if (diagramText != null) {
+						updateDiagramText(diagramText, path, markerAttributes);
+						return true;
+					}
+				}
 			}
 		}
 		return false;
@@ -521,16 +518,36 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		}
 	}
 
-	private boolean updateDiagramTextVorschlag(SelectionModel selected) {
+	private boolean updateDiagramText(SelectionModel selected) {
 		if (selected.activePart == null) {
 			return false;
 		}
-		currentKonfig = selected;
+
+		final List<DiagramTextProvider> providers = initUpdating(selected);
 		final Map<String, Object> markerAttributes = new HashMap<String, Object>();
-		final List<DiagramTextProvider> digramTextProviderList = Arrays.asList(Activator.getDefault().getDiagramTextProviders(true));
-		List<DiagramTextProvider> possibleProviders = digramTextProviderList.stream()
-				.filter(provider -> checkSelected(provider, selected)).collect(Collectors.toList());
-		String diagramText = generateText(possibleProviders, selected, markerAttributes);
+		String generatedText = generateText(providers, selected, markerAttributes);
+
+		return handleGeneratedText(generatedText, selected, markerAttributes);
+	}
+	private List<DiagramTextProvider> initUpdating(SelectionModel selected) {
+		currentKonfig = selected;
+		return initProviders(selected);
+	}
+
+	private List<DiagramTextProvider> initProviders(SelectionModel selected) {
+		final List<DiagramTextProvider> digramTextProviderList = Arrays
+				.asList(Activator.getDefault().getDiagramTextProviders(true));
+		return digramTextProviderList.stream().filter(provider -> checkSelected(provider, selected))
+				.collect(Collectors.toList());
+	}
+
+	private boolean checkSelected(DiagramTextProvider diagramTextProvider, SelectionModel selected) {
+		return supportsPart(diagramTextProvider, selected.activePart)
+				&& (selected.selection == null || diagramTextProvider.supportsSelection(selected.selection));
+	}
+	
+	private boolean handleGeneratedText(String diagramText, SelectionModel selected,
+			Map<String, Object> markerAttributes) {
 		if (diagramText != null) {
 			updateDiagramText(diagramText, selected.path, markerAttributes);
 			return true;
@@ -538,32 +555,29 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 			return false;
 		}
 	}
-	private String generateText(List<DiagramTextProvider> providers, SelectionModel selected,
-			Map<String, Object> markerAttributes) {
+	private String generateText(List<DiagramTextProvider> providers, SelectionModel selected, Map<String, Object> markerAttributes) {
+		String diagramText = null;
 		for (DiagramTextProvider provider : providers) {
-			if (isDTP2SupportsPart(provider, selected)) {
+			if (isDiagramTextProvider2(provider, selected)) {
+				if (((DiagramTextProvider2) provider).supportsPath(selected.path)) {
 				markerAttributes.clear();
 				return ((DiagramTextProvider2) provider).getDiagramText((IEditorPart) selected.activePart,
 						selected.selection, markerAttributes);
+				}
 			} else {
 				return getDiagramText(provider, selected.activePart, selected.selection);
 			}
 		}
-		return null;
-	}	
-	private boolean isDTP2SupportsPart(DiagramTextProvider provider, SelectionModel selected) {
+		return diagramText;
+	}
+	
+
+	private boolean isDiagramTextProvider2(DiagramTextProvider provider, SelectionModel selected) {
 		if (selected.activePart instanceof IEditorPart && provider instanceof DiagramTextProvider2) {
-			if(((DiagramTextProvider2) provider).supportsPath(selected.path)){
 				return true;
-			}
+			
 		}
 		return false;
-	}
-	private boolean checkSelected(DiagramTextProvider diagramTextProvider, SelectionModel selected) {
-		final DiagramModus modus = this.getDiagramModusProvider().getModus();
-		DiagramModus currentModus = diagramTextProvider.getModus();
-		return modus.equals(currentModus) && supportsPart(diagramTextProvider, selected.activePart)
-				&& (selected.selection == null || diagramTextProvider.supportsSelection(selected.selection));
 	}
 
 }

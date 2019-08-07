@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.eclipse.acceleo.engine.service.AbstractAcceleoGenerator;
 import org.eclipse.acceleo.module.palladio.basiccomponent.BasicComponentGenerator;
-import org.eclipse.acceleo.module.palladio.common.GeneratePalladio;
+import org.eclipse.acceleo.module.palladio.common.GenerateRepository;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -35,12 +35,8 @@ import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 //import org.palladiosimulator.pcm.repository.util.RepositoryResourceImpl;
 
 public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvider {
-
-	private final String testDiagram = "@startuml\r\n" + "actor Nutzer #green \r\n "
-			+ "Nutzer -> Facade: register()\r\n" + "activate Facade \r\n " + "Facade -> UserManagement: register()\r\n"
-			+ "activate UserManagement \r\n" + "UserManagement -> UserDBAdapter:addUser()\r\n"
-			+ "activate UserDBAdapter \r\n" + "UserDBAdapter -> DB: query()\r\n" + "deactivate UserDBAdapter \r\n"
-			+ "deactivate UserManagement \r\n" + "deactivate Facade \r\n" + "@enduml";
+	
+	private static final String notSelectedText = "@startuml \n title No valid selection \n @enduml";
 
 	public RepositoryDiagramTextProvider() {
 		initEndings();
@@ -62,11 +58,6 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		this.partTypes.add(PalladioComponentModelRepositoryDiagramEditor.class);
 	}
 
-	@Override
-	public String getDiagramText(IPath path) {
-		return testDiagram;
-	}
-
 	public static boolean isEcoreClassDiagramObject(final Object object) {
 		return object instanceof EModelElement;
 	}
@@ -74,7 +65,7 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 	@Override
 	public String getDiagramText(IEditorPart editorPart, ISelection selection, Map<String, Object> markerAttributes) {
 		if (!(selection instanceof IStructuredSelection)) {
-			return "@startuml \n title No valid selection \n @enduml";
+			return notSelectedText;
 		} else {
 			final Object sel = ((IStructuredSelection) selection).getFirstElement();
 			if (!(sel instanceof EObject) || isEcoreClassDiagramObject(sel)) {
@@ -87,11 +78,7 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 				return getDiagramText((BasicComponentImpl) sel);
 			}
 		}
-		return "@startuml \n facade -> facade : test \n @enduml";
-	}
-
-	private String getDiagramText(TreeIterator<Notifier> allContents) {
-		return transform();
+		return notSelectedText;
 	}
 
 	private String getDiagramText(BasicComponentImpl sel) {
@@ -114,7 +101,7 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		arguments.add(component.getId());
 		arguments.add(sel.getId());
 		try {
-			GeneratePalladio generator = new GeneratePalladio(repository, targetFolder, arguments);
+			GenerateRepository generator = new GenerateRepository(repository, targetFolder, arguments);
 			String text = transform(generator, targetFolder);
 			return text;
 		} catch (IOException e) {
@@ -166,14 +153,11 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		if (sel instanceof BasicComponentImpl) {
 			return true;
 		}
-		if (sel instanceof NodeImpl) {
-			return true;
-		}
 		return false;
 	}
 
-	private String transform() {
-		return testDiagram;
+	@Override
+	public String getDiagramText(IPath path) {
+		return notSelectedText;
 	}
-
 }

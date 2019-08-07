@@ -54,8 +54,4 @@ public abstract class AbstractPcmDiagramTextProvider extends AbstractEcoreClassD
 	public boolean supportsPath(IPath path) {
 		return pathEndings.stream().anyMatch(ending -> ending.equals(path.getFileExtension()));
 	}
-
-
-	@Override
-	public abstract String getDiagramText(IPath path);
 }
