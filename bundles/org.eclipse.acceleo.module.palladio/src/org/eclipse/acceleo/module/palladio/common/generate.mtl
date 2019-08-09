@@ -1,0 +1,74 @@
+[comment encoding = UTF-8 /]
+[module generate('http://palladiosimulator.org/PalladioComponentModel/Repository/5.2', 'http://palladiosimulator.org/PalladioComponentModel/SEFF/5.2', 'http://palladiosimulator.org/PalladioComponentModel/5.2')]
+[import org::eclipse::acceleo::module::palladio::common::generateInternalCall/]
+[import org::eclipse::acceleo::module::palladio::common::generateExternalCall/]
+[import org::eclipse::acceleo::module::palladio::common::generateBranchAction/]
+[import org::eclipse::acceleo::module::palladio::common::generateForkAction/]
+[import org::eclipse::acceleo::module::palladio::common::generateLoopAction/]
+
+[template public generateElement(aRepository : Repository, componentID : String, aMethodID : String) post(trim())]
+[comment @main/]
+[let aBasicComponent : BasicComponent = aRepository.eContents(BasicComponent) -> select(aBC : BasicComponent | aBC.id.equalsIgnoreCase(componentID)) -> first()]
+		[file ('generatedTransformation', false, 'UTF-8')]
+@startuml
+title Method: [getMethod(aBasicComponent, aMethodID).describedService__SEFF.entityName/]
+[generateSeff(aBasicComponent, aRepository,getMethod(aBasicComponent, aMethodID).describedService__SEFF.entityName, '')/]
+@enduml 
+		[/file] 
+[/let]
+[/template]
+
+[template public generateSeff(comp : BasicComponent, repository : Repository , aMethodName : String, nextComponentName : String) post (trim())]
+[for (seff : ServiceEffectSpecification | comp.serviceEffectSpecifications__BasicComponent)]
+[if (seff.describedService__SEFF.entityName.equalsIgnoreCase(aMethodName))]
+	[let componentName: String = if nextComponentName.equalsIgnoreCase('') then comp.entityName else nextComponentName endif]
+		[let startAction : StartAction = getStartAction(seff.oclAsType(ResourceDemandingBehaviour)) ]
+	[if not startAction.oclIsInvalid()]
+[startActionGeneration(startAction, repository, componentName)/]
+	[/if] 
+		[/let]
+	[/let]
+[/if]
+[/for]
+[/template]
+
+[template public startActionGeneration(startAction: StartAction, repository : Repository, componentName : String) post(trim())  {counter : Integer = 1;} ]
+[if checkLoop(startAction.id)]
+[if startAction.successor_AbstractAction.oclIsTypeOf(StopAction)]
+hnote over [componentName/] : do nothing
+[/if]
+[if not startAction.successor_AbstractAction.oclIsTypeOf(StopAction)]
+[generateActions(startAction.successor_AbstractAction, repository, componentName)/]
+[/if]
+[/if]
+[/template]
+
+[template private generateActions(action: AbstractAction, repository : Repository, componentName : String) post(trim())]
+[getInternalCall(action, componentName)/][
+getExternalCall(action, repository, componentName)/][
+getBranchActionCall(action, repository, componentName)/][
+generateSetVariableAction(action, componentName)/][
+generateForkAction(action, repository, componentName)/][
+generateLoopAction(action, repository, componentName)/]
+[if not (action.successor_AbstractAction.oclIsInvalid() or  action.successor_AbstractAction.oclIsTypeOf(StopAction))]
+[generateActions(action.successor_AbstractAction, repository, componentName)/]
+[/if]
+[/template]
+
+[template private generateSetVariableAction(action: AbstractAction, componentName: String) post(trim())]
+[if action.oclIsTypeOf(SetVariableAction)]
+[componentName/] -> [componentName/] : Set Variable [action.entityName/]
+[/if]
+
+[/template]
+
+[template private getExternalCaller(content: ExternalCallAction) post (trim())]
+[parseExternalComponent(content.role_ExternalService.entityName)/]
+[/template]
+
+[query private checkLoop(id:String): Boolean = invoke('org.eclipse.acceleo.module.palladio.common.LoopDetection', 'notContained(java.lang.String)', Sequence{id})/]
+[query public getMethod(component: BasicComponent, id : String):ResourceDemandingSEFF = component.eContents(ResourceDemandingSEFF) -> any(seff: ResourceDemandingSEFF | seff.id.equalsIgnoreCase(id))/]
+[query public getStartAction(behaviour : ResourceDemandingBehaviour) : StartAction = behaviour.eContents(StartAction) -> first()/]
+[query private parseExternalComponent(aName : String) : String = invoke('org.eclipse.acceleo.module.palladio.common.ParsingUtil', 'parseExternalCallActionName(java.lang.String)', Sequence{aName})/]
+
+ 

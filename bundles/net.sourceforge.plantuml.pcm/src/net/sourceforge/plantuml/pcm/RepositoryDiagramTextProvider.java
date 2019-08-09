@@ -14,29 +14,25 @@ import org.eclipse.acceleo.engine.service.AbstractAcceleoGenerator;
 import org.eclipse.acceleo.module.palladio.basiccomponent.BasicComponentGenerator;
 import org.eclipse.acceleo.module.palladio.common.GenerateRepository;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.gmf.runtime.notation.impl.NodeImpl;
 import org.palladiosimulator.pcm.repository.BasicComponent;
 import org.palladiosimulator.pcm.repository.impl.BasicComponentImpl;
+import org.palladiosimulator.pcm.repository.impl.RepositoryImpl;
 import org.palladiosimulator.pcm.repository.presentation.RepositoryEditor;
 import org.palladiosimulator.pcm.seff.impl.ResourceDemandingSEFFImpl;
 
 import de.uka.ipd.sdq.pcm.gmf.seff.part.SeffDiagramEditor;
 import de.uka.ipd.sdq.pcm.gmf.repository.part.PalladioComponentModelRepositoryDiagramEditor;
-import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 
-//import org.palladiosimulator.pcm.repository.util.RepositoryResourceImpl;
 
 public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 	
-	private static final String notSelectedText = "@startuml \n title No valid selection \n @enduml";
+	private static final String notSelectedText = "@startuml \n title not Implemented yet\n @enduml";
 
 	public RepositoryDiagramTextProvider() {
 		initEndings();
@@ -69,7 +65,7 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		} else {
 			final Object sel = ((IStructuredSelection) selection).getFirstElement();
 			if (!(sel instanceof EObject) || isEcoreClassDiagramObject(sel)) {
-				return null;
+				return notSelectedText;
 			}
 			if (sel instanceof ResourceDemandingSEFFImpl) {
 				return getDiagramText((ResourceDemandingSEFFImpl) sel);
@@ -84,7 +80,7 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 	private String getDiagramText(BasicComponentImpl sel) {
 		File targetFolder = new File("transformationen");
 		try {
-			BasicComponentGenerator generator = new BasicComponentGenerator(sel, targetFolder, new ArrayList());
+			BasicComponentGenerator generator = new BasicComponentGenerator(sel, targetFolder);
 			String text = transform(generator, targetFolder);
 			return text;
 		} catch (IOException e) {
@@ -151,6 +147,9 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		}
 
 		if (sel instanceof BasicComponentImpl) {
+			return true;
+		}
+		if (sel instanceof RepositoryImpl) {
 			return true;
 		}
 		return false;

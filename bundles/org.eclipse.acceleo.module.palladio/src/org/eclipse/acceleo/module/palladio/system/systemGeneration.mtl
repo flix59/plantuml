@@ -1,0 +1,17 @@
+[comment encoding = UTF-8 /]
+[module systemGeneration('http://palladiosimulator.org/PalladioComponentModel/5.2','http://palladiosimulator.org/PalladioComponentModel/System/5.2', 'http://palladiosimulator.org/PalladioComponentModel/Repository/5.2' )/]
+
+[template public systemGeneration(aSystem : System)]
+	
+	[comment @main /]
+	[file ('generatedTransformation', false, 'UTF-8')]
+		[comment aSystem.eContents(AssemblyContext).entityName/]
+		[aSystem.ancestors()/]
+		[comment aSystem.eContents(BasicComponent).entityName/]
+		[aSystem.eContents(AssemblyContext) -> first() .eGet('encapsulatedComponent__AssemblyContext').eGet('href')/]
+		[aSystem.eContents(AssemblyContext) -> first() .eGet('encapsulatedComponent__AssemblyContext').getProperty('href')/]
+		[aSystem.eContents(AssemblyContext) -> first() .eGet('encapsulatedComponent__AssemblyContext').repository__RepositoryComponent/]
+		[aSystem.eContents(AssemblyContext) -> first() .eGet('encapsulatedComponent__AssemblyContext').requiredRoles_InterfaceRequiringEntity/]
+	[/file]
+	
+[/template]

@@ -1,0 +1,11 @@
+[comment encoding = UTF-8 /]
+[module generateInternalCall('http://palladiosimulator.org/PalladioComponentModel/Repository/5.2', 'http://palladiosimulator.org/PalladioComponentModel/SEFF/5.2', 'http://palladiosimulator.org/PalladioComponentModel/5.2')]
+
+
+[template public getInternalCall(action: AbstractAction, componentName : String,) post(trim())]
+[if action.oclIsTypeOf(InternalAction) ]
+[let exAction: InternalAction = action.oclAsType(InternalAction)]
+[componentName/] -> [componentName/] : [exAction.entityName/]
+[/let]
+[/if]
+[/template]

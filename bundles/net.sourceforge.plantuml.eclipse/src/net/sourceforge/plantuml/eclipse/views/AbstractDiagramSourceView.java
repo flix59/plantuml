@@ -454,56 +454,11 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		return false;
 	}
 
-	protected String getDiagramText(final DiagramTextProvider diagramTextProvider, final IWorkbenchPart part,
-			final ISelection selection) {
-		if (part instanceof IViewPart) {
-			return diagramTextProvider.getDiagramText((IViewPart) part, selection);
-		} else if (part instanceof IEditorPart) {
-			return diagramTextProvider.getDiagramText((IEditorPart) part, selection);
-		}
-		return null;
-	}
-
 	private SelectionModel currentKonfig;
 
 	@Override
 	public void update(Observable o, Object arg) {
 		this.updateDiagramText(currentKonfig);
-	}
-
-	private boolean updateDiagramTextVorschlag(SelectionModel selected) {
-		currentKonfig = selected;
-
-		final IWorkbenchPart activePart = selected.activePart;
-		final ISelection selection = selected.selection;
-		final IPath path = selected.path;
-		if (activePart != null) {
-			final DiagramTextProvider[] diagramTextProviders = Activator.getDefault().getDiagramTextProviders(true);
-			final Map<String, Object> markerAttributes = new HashMap<String, Object>();
-			final DiagramModus modus = this.getDiagramModusProvider().getModus();
-			for (int i = 0; i < diagramTextProviders.length; i++) {
-				final DiagramTextProvider diagramTextProvider = diagramTextProviders[i];
-				DiagramModus currentModus = diagramTextProvider.getModus();
-				if (supportsPart(diagramTextProvider, activePart)
-						&& (selection == null || diagramTextProvider.supportsSelection(selection))) {
-					String diagramText = null;
-					System.out.println("selection not null: " + (selection != null));
-					if (activePart instanceof IEditorPart && diagramTextProvider instanceof DiagramTextProvider2) {
-						markerAttributes.clear();
-						diagramText = ((DiagramTextProvider2) diagramTextProvider)
-								.getDiagramText((IEditorPart) activePart, selection, markerAttributes);
-
-					} else {
-						diagramText = getDiagramText(diagramTextProvider, activePart, selection);
-					}
-					if (diagramText != null) {
-						updateDiagramText(diagramText, path, markerAttributes);
-						return true;
-					}
-				}
-			}
-		}
-		return false;
 	}
 
 	private class SelectionModel {
@@ -525,10 +480,11 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 
 		final List<DiagramTextProvider> providers = initUpdating(selected);
 		final Map<String, Object> markerAttributes = new HashMap<String, Object>();
-		String generatedText = generateText(providers, selected, markerAttributes);
 
+		String generatedText = generateText(providers, selected, markerAttributes);
 		return handleGeneratedText(generatedText, selected, markerAttributes);
 	}
+
 	private List<DiagramTextProvider> initUpdating(SelectionModel selected) {
 		currentKonfig = selected;
 		return initProviders(selected);
@@ -545,7 +501,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		return supportsPart(diagramTextProvider, selected.activePart)
 				&& (selected.selection == null || diagramTextProvider.supportsSelection(selected.selection));
 	}
-	
+
 	private boolean handleGeneratedText(String diagramText, SelectionModel selected,
 			Map<String, Object> markerAttributes) {
 		if (diagramText != null) {
@@ -555,14 +511,16 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 			return false;
 		}
 	}
-	private String generateText(List<DiagramTextProvider> providers, SelectionModel selected, Map<String, Object> markerAttributes) {
+
+	private String generateText(List<DiagramTextProvider> providers, SelectionModel selected,
+			Map<String, Object> markerAttributes) {
 		String diagramText = null;
 		for (DiagramTextProvider provider : providers) {
 			if (isDiagramTextProvider2(provider, selected)) {
 				if (((DiagramTextProvider2) provider).supportsPath(selected.path)) {
-				markerAttributes.clear();
-				return ((DiagramTextProvider2) provider).getDiagramText((IEditorPart) selected.activePart,
-						selected.selection, markerAttributes);
+					markerAttributes.clear();
+					return ((DiagramTextProvider2) provider).getDiagramText((IEditorPart) selected.activePart,
+							selected.selection, markerAttributes);
 				}
 			} else {
 				return getDiagramText(provider, selected.activePart, selected.selection);
@@ -570,14 +528,21 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		}
 		return diagramText;
 	}
-	
 
 	private boolean isDiagramTextProvider2(DiagramTextProvider provider, SelectionModel selected) {
 		if (selected.activePart instanceof IEditorPart && provider instanceof DiagramTextProvider2) {
-				return true;
-			
+			return true;
 		}
 		return false;
 	}
 
+	protected String getDiagramText(final DiagramTextProvider diagramTextProvider, final IWorkbenchPart part,
+			final ISelection selection) {
+		if (part instanceof IViewPart) {
+			return diagramTextProvider.getDiagramText((IViewPart) part, selection);
+		} else if (part instanceof IEditorPart) {
+			return diagramTextProvider.getDiagramText((IEditorPart) part, selection);
+		}
+		return null;
+	}
 }

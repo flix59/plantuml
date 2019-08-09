@@ -1,0 +1,36 @@
+@startuml
+title Method: download
+Cache -> Cache : JNDI RMI overhead
+Cache -> Cache : accessCache
+alt Single Request, spez: audioRequest.Count.VALUE == 1
+alt probability of 0.6
+Cache -> Cache : Set Variable aName
+else probability of 0.4
+Cache -> "MediaAccess" : download
+	MediaAccess -> MediaAccess : JNDI RMI overhead
+	MediaAccess -> DB : query
+			DB -> DB : queryDB
+			DB -> MediaAccess  : void
+	MediaAccess -> FileStorage : getFiles
+			FileStorage -> FileStorage : get files
+			FileStorage -> FileStorage : Set Variable aName
+			FileStorage -> MediaAccess  : FileContent
+	MediaAccess -> MediaAccess : Set Variable aName
+	"MediaAccess" -> Cache  : AudioCollectionRequest
+Cache -> Cache : Set Variable aName
+end
+else Collection Request, spez: audioRequest.Count.VALUE > 1
+Cache -> "MediaAccess" : download
+	MediaAccess -> MediaAccess : JNDI RMI overhead
+	MediaAccess -> DB : query
+			DB -> DB : queryDB
+			DB -> MediaAccess  : void
+	MediaAccess -> FileStorage : getFiles
+			FileStorage -> FileStorage : get files
+			FileStorage -> FileStorage : Set Variable aName
+			FileStorage -> MediaAccess  : FileContent
+	MediaAccess -> MediaAccess : Set Variable aName
+	"MediaAccess" -> Cache  : AudioCollectionRequest
+Cache -> Cache : Set Variable aName
+end
+@enduml 
