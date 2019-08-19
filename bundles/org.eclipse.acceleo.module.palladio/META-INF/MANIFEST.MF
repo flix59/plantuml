@@ -21,5 +21,6 @@ Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.acceleo.module.palladio.basiccomponent,
  org.eclipse.acceleo.module.palladio.common,
- org.eclipse.acceleo.module.palladio.system
+ org.eclipse.acceleo.module.palladio.system,
+ org.eclipse.acceleo.module.palladio.usage
 

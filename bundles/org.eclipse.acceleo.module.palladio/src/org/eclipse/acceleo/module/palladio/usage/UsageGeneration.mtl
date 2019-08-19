@@ -1,0 +1,40 @@
+[comment encoding = UTF-8 /]
+[module UsageGeneration('http://palladiosimulator.org/PalladioComponentModel/Repository/5.2','http://palladiosimulator.org/PalladioComponentModel/System/5.2', 'http://palladiosimulator.org/PalladioComponentModel/5.2')]
+
+[template public UsageGeneration(scenario : ScenarioBehaviour)]
+	[comment @main/]
+[file ('generatedTransformation', false, 'UTF-8')]
+@startuml
+title [scenario.usageScenario_SenarioBehaviour.entityName/]
+	[if (not scenario.eContents(Start) -> first().successor.oclIsTypeOf(Stop))]
+[scenario.eContainer(UsageModel).siblings()/]
+[processUserAction(scenario.eContents(Start) -> first().successor.oclAsType(EntryLevelSystemCall))/]
+	[/if]
+@enduml 
+[/file] 
+[/template]
+
+[template private processUserAction(action: EntryLevelSystemCall) post(trim())]
+[let repository: Repository = action.providedRole_EntryLevelSystemCall.providedInterface__OperationProvidedRole.repository__Interface]
+[let system: System = action.providedRole_EntryLevelSystemCall.providingEntity_ProvidedRole]
+[let component: BasicComponent = getComponent(system, action.providedRole_EntryLevelSystemCall.id)]
+[let seff: ResourceDemandingSEFF = getMethod(component, action.operationSignature__EntryLevelSystemCall.id)]
+
+seff name [seff.describedService__SEFF.entityName/]
+seff id [seff.id/];
+id of providedRole [action.providedRole_EntryLevelSystemCall.id/];
+id of provided Interface [action.providedRole_EntryLevelSystemCall.providedInterface__OperationProvidedRole.id/]
+id of Component [getComponent(system, action.providedRole_EntryLevelSystemCall.id).id/]
+[/let]
+[/let]
+[/let]
+[/let]
+[/template]
+
+[query private findProvidingConnector(system: System, id: String): OperationProvidedRole = system.eContents(ProvidedDelegationConnector) -> select(connector: ProvidedDelegationConnector | connector.outerProvidedRole_ProvidedDelegationConnector.id.equalsIgnoreCase(id)) -> first().innerProvidedRole_ProvidedDelegationConnector/]
+[query private getComponent(system: System, id: String): BasicComponent = findProvidingConnector(system, id).eContainer(BasicComponent)/]
+[query private getMethod(component: BasicComponent, operationSignaturId: String): ResourceDemandingSEFF = component.eContents(ResourceDemandingSEFF) -> select(seff : ResourceDemandingSEFF | seff.describedService__SEFF.id.equalsIgnoreCase(operationSignaturId)) -> any(x| true)/]
+
+[query private findInnerOperationProvidedRole(system: System, providedRoleId: String): OperationProvidedRole = system.eContents(ProvidedDelegationConnector) -> select(provider: ProvidedDelegationConnector| provider.outerProvidedRole_ProvidedDelegationConnector.id.equalsIgnoreCase(providedRoleId)) /]
+[query private getBasicComponentProvidingRole(system: System, providedRoleId: String): BasicComponent =  /]
+[query private componentContainsProvidedId(component: BasicComponent, providedRoleId: String): Boolean = component.providedRoles_InterfaceProvidingEntity.id -> exists(id: String | id.equalsIgnoreCase(providedRoleId))/]
