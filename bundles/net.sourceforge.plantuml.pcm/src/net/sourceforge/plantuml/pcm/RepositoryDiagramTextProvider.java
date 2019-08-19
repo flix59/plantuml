@@ -32,7 +32,6 @@ import de.uka.ipd.sdq.pcm.gmf.repository.part.PalladioComponentModelRepositoryDi
 
 public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 	
-	private static final String notSelectedText = "@startuml \n title not Implemented yet\n @enduml";
 
 	public RepositoryDiagramTextProvider() {
 		initEndings();
@@ -100,35 +99,6 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 			GenerateRepository generator = new GenerateRepository(repository, targetFolder, arguments);
 			String text = transform(generator, targetFolder);
 			return text;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private String transform(AbstractAcceleoGenerator generator, File directory) {
-		try {
-			generator.doGenerate(new BasicMonitor());
-			File transformationFile = new File(directory.getAbsolutePath() + "/generatedTransformation");
-			String text = readString(transformationFile);
-			return text;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private String readString(File transformationFile) {
-		try {
-			FileInputStream fis = new FileInputStream(transformationFile);
-			StringBuilder sb = new StringBuilder();
-			String line;
-			BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-				sb.append('\n');
-			}
-			return sb.toString();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

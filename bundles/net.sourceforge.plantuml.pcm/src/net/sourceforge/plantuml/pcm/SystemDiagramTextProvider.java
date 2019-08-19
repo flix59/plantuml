@@ -1,34 +1,24 @@
 package net.sourceforge.plantuml.pcm;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import java.util.LinkedList;
 import java.util.Map;
-
+import org.eclipse.acceleo.module.palladio.system.SystemGeneration;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewPart;
+import org.palladiosimulator.pcm.system.impl.SystemImpl;
 import org.palladiosimulator.pcm.system.presentation.SystemEditor;
 
 public class SystemDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 
-	private final String testDiagram = "@startuml\r\n" + 
-			"actor Nutzer #green \r\n "+
-			"Nutzer -> System: register()\r\n" + 
-			"activate System \r\n " +
-			"System -> UserManagement: register()\r\n" + 
-			"activate UserManagement \r\n" + 
-			"UserManagement -> UserDBAdapter:addUser()\r\n"+ 
-			"activate UserDBAdapter \r\n" + 
-			"UserDBAdapter -> DB: query()\r\n"
-			+ "deactivate UserDBAdapter \r\n"
-			+ "deactivate UserManagement \r\n"
-			+ "deactivate System \r\n" + 
-			"@enduml";
+	private static final String notSelectedText = "@startuml \n title not Implemented yet\n @enduml";
+
 	
 	public SystemDiagramTextProvider() {
 		initEndings();
@@ -50,14 +40,41 @@ public class SystemDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 
 	@Override 
 	public String getDiagramText(IEditorPart editorPart, ISelection selection, Map<String, Object> markerAttributes) {
-		// here happens the transformation
-		return testDiagram;
+		if (!(selection instanceof IStructuredSelection)) {
+			return notSelectedText;
+		} else {
+			final Object sel = ((IStructuredSelection) selection).getFirstElement();
+			if (!(sel instanceof EObject) || isEcoreClassDiagramObject(sel)) {
+				return notSelectedText;
+			}
+			if(sel instanceof SystemImpl) {
+				getDiagramText((SystemImpl)sel);
+			}
+
+		}
+		return notSelectedText;
+	}
+	
+	private String getDiagramText(SystemImpl selection) {
+		File targetFolder = new File("transformationen");
+		try {
+			SystemGeneration generator = new SystemGeneration(selection, targetFolder, new ArrayList<String>());
+			return transform(generator, targetFolder);	
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		return null;
 	}
 
 	@Override
 	public String getDiagramText(IPath path) {
 		// TODO Auto-generated method stub
-		return testDiagram;
+		return notSelectedText;
+	}
+	
+	@Override
+	public boolean supportsSelection(ISelection selection) {
+		return true;
 	}
 
 

@@ -6,12 +6,6 @@
 	[comment @main /]
 	[file ('generatedTransformation', false, 'UTF-8')]
 		[comment aSystem.eContents(AssemblyContext).entityName/]
-		[aSystem.ancestors()/]
-		[comment aSystem.eContents(BasicComponent).entityName/]
-		[aSystem.eContents(AssemblyContext) -> first() .eGet('encapsulatedComponent__AssemblyContext').eGet('href')/]
-		[aSystem.eContents(AssemblyContext) -> first() .eGet('encapsulatedComponent__AssemblyContext').getProperty('href')/]
-		[aSystem.eContents(AssemblyContext) -> first() .eGet('encapsulatedComponent__AssemblyContext').repository__RepositoryComponent/]
-		[aSystem.eContents(AssemblyContext) -> first() .eGet('encapsulatedComponent__AssemblyContext').requiredRoles_InterfaceRequiringEntity/]
+		[aSystem.eContents(AssemblyContext) -> first().encapsulatedComponent__AssemblyContext.id/]
 	[/file]
-	
 [/template]
