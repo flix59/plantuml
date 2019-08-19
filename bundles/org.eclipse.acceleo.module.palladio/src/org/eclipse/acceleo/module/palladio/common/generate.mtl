@@ -18,6 +18,9 @@ title Method: [getMethod(aBasicComponent, aMethodID).describedService__SEFF.enti
 [/let]
 [/template]
 
+[template public generateRepositoryText(aRepository: Repository, aSEFF: ResourceDemandingSEFF, aSystem: System)]
+[/template]
+
 [template public generateSeff(comp : BasicComponent, repository : Repository , aMethodName : String, nextComponentName : String) post (trim())]
 [for (seff : ServiceEffectSpecification | comp.serviceEffectSpecifications__BasicComponent)]
 [if (seff.describedService__SEFF.entityName.equalsIgnoreCase(aMethodName))]
