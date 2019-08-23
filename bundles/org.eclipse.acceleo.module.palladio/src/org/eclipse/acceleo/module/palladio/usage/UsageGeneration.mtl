@@ -1,5 +1,6 @@
 [comment encoding = UTF-8 /]
 [module UsageGeneration('http://palladiosimulator.org/PalladioComponentModel/Repository/5.2','http://palladiosimulator.org/PalladioComponentModel/System/5.2', 'http://palladiosimulator.org/PalladioComponentModel/5.2')]
+[import org::eclipse::acceleo::module::palladio::common::generate/]
 
 [template public UsageGeneration(scenario : ScenarioBehaviour)]
 	[comment @main/]
@@ -15,16 +16,11 @@ title [scenario.usageScenario_SenarioBehaviour.entityName/]
 [/template]
 
 [template private processUserAction(action: EntryLevelSystemCall) post(trim())]
-[let repository: Repository = action.providedRole_EntryLevelSystemCall.providedInterface__OperationProvidedRole.repository__Interface]
-[let system: System = action.providedRole_EntryLevelSystemCall.providingEntity_ProvidedRole]
-[let component: BasicComponent = getComponent(system, action.providedRole_EntryLevelSystemCall.id)]
-[let seff: ResourceDemandingSEFF = getMethod(component, action.operationSignature__EntryLevelSystemCall.id)]
-
-seff name [seff.describedService__SEFF.entityName/]
-seff id [seff.id/];
-id of providedRole [action.providedRole_EntryLevelSystemCall.id/];
-id of provided Interface [action.providedRole_EntryLevelSystemCall.providedInterface__OperationProvidedRole.id/]
-id of Component [getComponent(system, action.providedRole_EntryLevelSystemCall.id).id/]
+[let aRepository: Repository = action.providedRole_EntryLevelSystemCall.providedInterface__OperationProvidedRole.repository__Interface]
+[let aSystem: System = action.providedRole_EntryLevelSystemCall.providingEntity_ProvidedRole]
+[let component: BasicComponent = getComponent(aSystem, action.providedRole_EntryLevelSystemCall.id)]
+[let aSEFF: ResourceDemandingSEFF = getMethod(component, action.operationSignature__EntryLevelSystemCall.id)]
+[generateRepositoryText(aRepository, aSEFF, aSystem)/]
 [/let]
 [/let]
 [/let]

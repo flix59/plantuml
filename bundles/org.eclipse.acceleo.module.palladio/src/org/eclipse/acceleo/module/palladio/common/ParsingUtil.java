@@ -10,4 +10,7 @@ public class ParsingUtil {
 	public static String parseInterfaceName(String name) {
 		return name.split("I")[1];
 	}
+	public static Object getInvalid() {
+		return null;
+	}
 }
