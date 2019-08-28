@@ -19,7 +19,8 @@ title Method: [getMethod(aBasicComponent, aMethodID).describedService__SEFF.enti
 [/template]
 
 [template public generateRepositoryText(aRepository: Repository, aSEFF: ResourceDemandingSEFF, aSystem: System)]
-[startActionGeneration(getStartAction(aSEFF), aRepository, aSEFF.describedService__SEFF.entityName, aSystem)/]
+User -> [aSEFF.basicComponent_ServiceEffectSpecification.entityName/] : [aSEFF.describedService__SEFF.entityName/]
+[startActionGeneration(getStartAction(aSEFF), aRepository, aSEFF.basicComponent_ServiceEffectSpecification.entityName, aSystem)/]
 [/template]
 
 [template public generateSeff(comp : BasicComponent, repository : Repository , aMethodName : String, nextComponentName : String, aSystem: OclAny) post (trim())]
@@ -38,9 +39,6 @@ title Method: [getMethod(aBasicComponent, aMethodID).describedService__SEFF.enti
 
 [template public startActionGeneration(startAction: StartAction, repository : Repository, componentName : String, aSystem: OclAny) post(trim())  {counter : Integer = 1;} ]
 [if checkLoop(startAction.id)]
-[startAction.successor_AbstractAction.entityName/]
-[startAction.entityName/]
-
 [if startAction.successor_AbstractAction.oclIsTypeOf(StopAction)]
 hnote over [componentName/] : do nothing
 [/if]

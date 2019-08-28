@@ -7,12 +7,20 @@
 [file ('generatedTransformation', false, 'UTF-8')]
 @startuml
 title [scenario.usageScenario_SenarioBehaviour.entityName/]
+actor User
 	[if (not scenario.eContents(Start) -> first().successor.oclIsTypeOf(Stop))]
 [scenario.eContainer(UsageModel).siblings()/]
-[processUserAction(scenario.eContents(Start) -> first().successor.oclAsType(EntryLevelSystemCall))/]
+[iterateCall(scenario.eContents(Start) -> first().successor.oclAsType(EntryLevelSystemCall))/]
 	[/if]
 @enduml 
 [/file] 
+[/template]
+
+[template private iterateCall(call: EntryLevelSystemCall) post(trim())]
+[processUserAction(call)/]
+[if not call.successor.oclIsTypeOf(Stop)]
+[iterateCall(call.successor.oclAsType(EntryLevelSystemCall))/]
+[/if]
 [/template]
 
 [template private processUserAction(action: EntryLevelSystemCall) post(trim())]

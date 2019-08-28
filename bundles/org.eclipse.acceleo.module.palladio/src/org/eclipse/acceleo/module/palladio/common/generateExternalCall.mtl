@@ -32,8 +32,6 @@
 [/if]
 [if aSystem.oclIsTypeOf(System)]
 [let component: BasicComponent= getComponentFromSystem(aSystem.oclAsType(System), action)]
-[component.entityName/]
-[component.id/]
 [generateProviderText(startComponentName,getComponentFromSystem(aSystem.oclAsType(System), action), aMethodName, action,repository, normalComponents -> first().entityName, aSystem)/]
 [/let] 
 [/if]
