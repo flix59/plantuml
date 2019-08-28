@@ -19,6 +19,7 @@ import org.eclipse.acceleo.engine.event.IAcceleoTextGenerationListener;
 import org.eclipse.acceleo.engine.generation.strategy.IAcceleoGenerationStrategy;
 import org.eclipse.acceleo.engine.service.AbstractAcceleoGenerator;
 import org.eclipse.acceleo.module.palladio.common.GenerationListener;
+import org.eclipse.acceleo.module.palladio.common.LoopDetection;
 import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.emf.common.util.Monitor;
 import org.eclipse.emf.common.util.URI;
@@ -111,6 +112,7 @@ public class UsageGeneration extends AbstractAcceleoGenerator {
         initialize(model, targetFolder, arguments);
         GenerationListener listener = new GenerationListener();
         this.addGenerationListener(listener);
+        LoopDetection.reset();
         org.eclipse.acceleo.common.preference.AcceleoPreferences.switchQueryCache(false);
     }
     /**

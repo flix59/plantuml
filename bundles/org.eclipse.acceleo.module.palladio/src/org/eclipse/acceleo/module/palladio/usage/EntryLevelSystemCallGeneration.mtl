@@ -1,0 +1,16 @@
+[comment encoding = UTF-8 /]
+[module EntryLevelSystemCallGeneration('http://palladiosimulator.org/PalladioComponentModel/Repository/5.2','http://palladiosimulator.org/PalladioComponentModel/System/5.2', 'http://palladiosimulator.org/PalladioComponentModel/5.2')]
+[import org::eclipse::acceleo::module::palladio::usage::UsageGeneration/]
+
+[template public EntryLevelSystemCallGeneration(call : EntryLevelSystemCall)]
+	
+	[comment @main/]
+[file ('generatedTransformation', false, 'UTF-8')]
+@startuml
+title [call.operationSignature__EntryLevelSystemCall.entityName/]
+actor User
+[processUserAction(call)/]
+@enduml 
+[/file] 
+	
+[/template]

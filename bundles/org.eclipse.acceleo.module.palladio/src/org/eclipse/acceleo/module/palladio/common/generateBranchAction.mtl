@@ -10,7 +10,7 @@ alt [runAllBranchTransitions(firstTransition, repository, componentName, aSystem
 [for (transition: AbstractBranchTransition | branchAction.eContents(AbstractBranchTransition) -> reject(transition | transition = firstTransition))]
 else [runAllBranchTransitions(transition, repository, componentName, aSystem)/]
 [/for]
-[/let] 
+[/let]  
 [/let]
 end  
 [/if]

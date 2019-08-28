@@ -8,19 +8,18 @@
  * Contributors:
  *     Obeo - initial API and implementation
  *******************************************************************************/
-package org.eclipse.acceleo.module.palladio.common;
+package org.eclipse.acceleo.module.palladio.usage;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
 
-import org.eclipse.acceleo.engine.event.AcceleoTextGenerationEvent;
 import org.eclipse.acceleo.engine.event.IAcceleoTextGenerationListener;
 import org.eclipse.acceleo.engine.generation.strategy.IAcceleoGenerationStrategy;
 import org.eclipse.acceleo.engine.service.AbstractAcceleoGenerator;
+import org.eclipse.acceleo.module.palladio.common.GenerationListener;
+import org.eclipse.acceleo.module.palladio.common.LoopDetection;
 import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.emf.common.util.Monitor;
 import org.eclipse.emf.common.util.URI;
@@ -28,27 +27,24 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 /**
- * Entry point of the 'Generate' generation module.
+ * Entry point of the 'EntryLevelSystemCall' generation module.
  *
  * @generated
  */
-public class GenerateRepository extends AbstractAcceleoGenerator {
+public class EntryLevelSystemCallGeneration extends AbstractAcceleoGenerator {
     /**
      * The name of the module.
      *
      * @generated
      */
-    public static final String MODULE_FILE_NAME = "/org/eclipse/acceleo/module/palladio/common/generate";
-        
+    public static final String MODULE_FILE_NAME = "/org/eclipse/acceleo/module/palladio/usage/EntryLevelSystemCallGeneration";
     
     /**
      * The name of the templates that are to be generated.
      *
      * @generated
      */
-    public static final String[] TEMPLATE_NAMES = { "generateElement" };
-    
-    public EObject model;
+    public static final String[] TEMPLATE_NAMES = { "EntryLevelSystemCallGeneration" };
     
     /**
      * The list of properties files from the launch parameters (Launch configuration).
@@ -71,14 +67,9 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
      *
      * @generated
      */
-    public GenerateRepository() {
+    public EntryLevelSystemCallGeneration() {
         // Empty implementation
     }
-    
-    /*@Override
-    public EObject getModel() {
-    	return this.model;
-    }*/  
 
     /**
      * This allows clients to instantiates a generator with all required information.
@@ -94,15 +85,10 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
      * @throws IOException
      *             This can be thrown in three scenarios : the module cannot be found, it cannot be loaded, or
      *             the model cannot be loaded.
-     * @generated
      */
-    public GenerateRepository(URI modelURI, File targetFolder,
+    public EntryLevelSystemCallGeneration(URI modelURI, File targetFolder,
             List<? extends Object> arguments) throws IOException {
         initialize(modelURI, targetFolder, arguments);
-        GenerationListener listener = new GenerationListener();
-        this.addGenerationListener(listener);
-        LoopDetection.reset();
-        org.eclipse.acceleo.common.preference.AcceleoPreferences.switchQueryCache(false);
     }
 
     /**
@@ -119,13 +105,13 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
      *            pass them here.
      * @throws IOException
      *             This can be thrown in two scenarios : the module cannot be found, or it cannot be loaded.
-     * @generated
      */
-    public GenerateRepository(EObject model, File targetFolder,
+    public EntryLevelSystemCallGeneration(EObject model, File targetFolder,
             List<? extends Object> arguments) throws IOException {
         initialize(model, targetFolder, arguments);
         GenerationListener listener = new GenerationListener();
         this.addGenerationListener(listener);
+        LoopDetection.reset();
         org.eclipse.acceleo.common.preference.AcceleoPreferences.switchQueryCache(false);
     }
     
@@ -134,6 +120,7 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
      * 
      * @param args
      *            Arguments of the generation.
+     * @generated
      */
     public static void main(String[] args) {
         try {
@@ -144,9 +131,6 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
                 File folder = new File(args[1]);
                 
                 List<String> arguments = new ArrayList<String>();
-                
-                arguments.add("_st2Y0HDrEeSqnN80MQ2uGw");
-                arguments.add("_CPoTsHD2EeSA4fySuX9I2Q");
                 
                 /*
                  * If you want to change the content of this method, do NOT forget to change the "@generated"
@@ -161,9 +145,8 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
                  * add in "arguments" this "String" attribute.
                  */
                 
-                GenerateRepository generator = new GenerateRepository(modelURI, folder, arguments);
-                org.eclipse.acceleo.common.preference.AcceleoPreferences.switchQueryCache(false);
-
+                EntryLevelSystemCallGeneration generator = new EntryLevelSystemCallGeneration(modelURI, folder, arguments);
+                
                 /*
                  * Add the properties from the launch arguments.
                  * If you want to programmatically add new properties, add them in "propertiesFiles"
@@ -192,7 +175,7 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
      *            This will be used to display progress information to the user.
      * @throws IOException
      *             This will be thrown if any of the output files cannot be saved to disk.
-     * @generated NOT
+     * @generated
      */
     @Override
     public void doGenerate(Monitor monitor) throws IOException {
@@ -219,7 +202,7 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
         //        System.err.println(diagnostic.toString());
         //    }
         //}
-    	LoopDetection.reset();
+
         super.doGenerate(monitor);
     }
     
@@ -277,11 +260,6 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
     @Override
     public String getModuleName() {
         return MODULE_FILE_NAME;
-    }
-    
-    /*@Override
-    public EObject getModel() {
-    	return null;
     }
     
     /**
@@ -369,6 +347,69 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
         if (!isInWorkspace(org.palladiosimulator.pcm.repository.RepositoryPackage.class)) {
             resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.repository.RepositoryPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.repository.RepositoryPackage.eINSTANCE);
         }
+        if (!isInWorkspace(org.palladiosimulator.pcm.system.SystemPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.system.SystemPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.system.SystemPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.PcmPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.PcmPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.PcmPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.core.CorePackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.core.CorePackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.core.CorePackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.core.entity.EntityPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.core.entity.EntityPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.core.entity.EntityPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.core.composition.CompositionPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.core.composition.CompositionPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.core.composition.CompositionPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.usagemodel.UsagemodelPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.usagemodel.UsagemodelPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.usagemodel.UsagemodelPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.repository.RepositoryPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.repository.RepositoryPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.repository.RepositoryPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.resourcetype.ResourcetypePackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.resourcetype.ResourcetypePackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.resourcetype.ResourcetypePackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.protocol.ProtocolPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.protocol.ProtocolPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.protocol.ProtocolPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.parameter.ParameterPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.parameter.ParameterPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.parameter.ParameterPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.reliability.ReliabilityPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.reliability.ReliabilityPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.reliability.ReliabilityPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.seff.SeffPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.seff.SeffPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.seff.SeffPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.seff.seff_performance.SeffPerformancePackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.seff.seff_performance.SeffPerformancePackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.seff.seff_performance.SeffPerformancePackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.seff.seff_reliability.SeffReliabilityPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.seff.seff_reliability.SeffReliabilityPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.seff.seff_reliability.SeffReliabilityPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.qosannotations.QosannotationsPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.qosannotations.QosannotationsPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.qosannotations.QosannotationsPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.qosannotations.qos_performance.QosPerformancePackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.qosannotations.qos_performance.QosPerformancePackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.qosannotations.qos_performance.QosPerformancePackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.qosannotations.qos_reliability.QosReliabilityPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.qosannotations.qos_reliability.QosReliabilityPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.qosannotations.qos_reliability.QosReliabilityPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.system.SystemPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.system.SystemPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.system.SystemPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.resourceenvironment.ResourceenvironmentPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.resourceenvironment.ResourceenvironmentPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.resourceenvironment.ResourceenvironmentPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.allocation.AllocationPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.allocation.AllocationPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.allocation.AllocationPackage.eINSTANCE);
+        }
+        if (!isInWorkspace(org.palladiosimulator.pcm.subsystem.SubsystemPackage.class)) {
+            resourceSet.getPackageRegistry().put(org.palladiosimulator.pcm.subsystem.SubsystemPackage.eINSTANCE.getNsURI(), org.palladiosimulator.pcm.subsystem.SubsystemPackage.eINSTANCE);
+        }
         
         /*
          * If you want to change the content of this method, do NOT forget to change the "@generated"
@@ -437,4 +478,5 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
          */ 
         // UMLResourcesUtil.init(resourceSet)
     }
+    
 }
