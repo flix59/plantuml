@@ -15,14 +15,6 @@ import net.sourceforge.plantuml.util.DiagramModus;
 public interface DiagramTextProvider {
 	
 	/**
-	 * Gives DiagramTextProvider an Modus default is class diagram
-	 * @return the modus from the Provider
-	 */
-	public default DiagramModus getModus() {
-		return DiagramModus.CLASSDIAGRAMM;
-	}
-
-	/**
 	 * Tells if the specified editor (or its input) is supported
 	 * @param editorPart
 	 * @return true if the specified editor (or its input) is supported, false otherwise

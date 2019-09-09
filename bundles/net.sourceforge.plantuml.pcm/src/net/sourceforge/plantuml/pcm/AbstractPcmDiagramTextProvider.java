@@ -8,42 +8,37 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import org.eclipse.acceleo.engine.service.AbstractAcceleoGenerator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.BasicMonitor;
-import org.eclipse.emf.edit.domain.IEditingDomainProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 
-import net.sourceforge.plantuml.eclipse.utils.DiagramTextProvider2;
+import net.sourceforge.plantuml.eclipse.utils.ModusDiagramTextProvider;
 import net.sourceforge.plantuml.ecore.AbstractEcoreClassDiagramTextProvider;
 
 import net.sourceforge.plantuml.util.DiagramModus;
 
-public abstract class AbstractPcmDiagramTextProvider extends AbstractEcoreClassDiagramTextProvider
-		implements DiagramTextProvider2 {
+public abstract class AbstractPcmDiagramTextProvider extends AbstractEcoreClassDiagramTextProvider implements ModusDiagramTextProvider{
 	protected static final String notSelectedText = "@startuml \n title not Implemented yet\n @enduml";
 
 
-	public List<String> pathEndings;
 	public List<Class<?>> partTypes;
-	private final DiagramModus modus = DiagramModus.SEQUENZDIAGRAMM;
+	private DiagramModus modus = DiagramModus.SMALL;
 
 	public DiagramModus getModus() {
 		return modus;
 	}
+	
+	public void setDiagramModus(DiagramModus modus) {
+		this.modus = modus;
+	}
 
 	public AbstractPcmDiagramTextProvider() {
-		this.initEndings();
 		this.initPartTypes();
 	}
 
 	public AbstractPcmDiagramTextProvider(final Class<?> editorType) {
 		super(editorType);
 	}
-
-	public abstract void initEndings();
 
 	public abstract void initPartTypes();
 
@@ -59,10 +54,7 @@ public abstract class AbstractPcmDiagramTextProvider extends AbstractEcoreClassD
 	public boolean supportsView(final IViewPart part) {
 		return check(part);
 	}
-	@Override
-	public boolean supportsPath(IPath path) {
-		return pathEndings.stream().anyMatch(ending -> ending.equals(path.getFileExtension()));
-	}
+	
 	protected String readStringFromFile(File transformationFile) {
 		try {
 			FileInputStream fis = new FileInputStream(transformationFile);

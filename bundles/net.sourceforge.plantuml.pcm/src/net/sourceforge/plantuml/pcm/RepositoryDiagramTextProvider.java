@@ -34,17 +34,9 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 	
 
 	public RepositoryDiagramTextProvider() {
-		initEndings();
 		this.setEditorType(RepositoryEditor.class);
 	}
-
-	@Override
-	public void initEndings() {
-		this.pathEndings = new LinkedList<String>();
-		this.pathEndings.add("repository");
-		this.pathEndings.add("repository_diagram");
-	}
-
+	
 	@Override
 	public void initPartTypes() {
 		this.partTypes = new ArrayList<Class<?>>();
@@ -95,6 +87,9 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		BasicComponent component = (BasicComponent) sel.eContainer();
 		arguments.add(component.getId());
 		arguments.add(sel.getId());
+		System.out.print("trest");
+		System.out.print(" tetst" + this.getModus().name());
+		arguments.add(this.getModus().name());
 		try {
 			GenerateRepository generator = new GenerateRepository(repository, targetFolder, arguments);
 			String text = transform(generator, targetFolder);
@@ -123,10 +118,5 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public String getDiagramText(IPath path) {
-		return notSelectedText;
 	}
 }

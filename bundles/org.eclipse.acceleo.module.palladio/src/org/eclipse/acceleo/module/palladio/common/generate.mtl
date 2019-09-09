@@ -6,30 +6,35 @@
 [import org::eclipse::acceleo::module::palladio::common::generateForkAction/]
 [import org::eclipse::acceleo::module::palladio::common::generateLoopAction/]
 
-[template public generateElement(aRepository : Repository, componentID : String, aMethodID : String) post(trim())]
+[template public generateElement(aRepository : Repository, componentID : String, aMethodID : String, modus: String) post(trim())]
 [comment @main/]
 [let aBasicComponent : BasicComponent = aRepository.eContents(BasicComponent) -> select(aBC : BasicComponent | aBC.id.equalsIgnoreCase(componentID)) -> first()]
+[let aMethod: ResourceDemandingSEFF = getMethod(aBasicComponent, aMethodID)]
 		[file ('generatedTransformation', false, 'UTF-8')]
 @startuml
-title Method: [getMethod(aBasicComponent, aMethodID).describedService__SEFF.entityName/]
-[generateSeff(aBasicComponent, aRepository,getMethod(aBasicComponent, aMethodID).describedService__SEFF.entityName, '', false)/]
+[let aModusSmall: Boolean = modus.equalsIgnoreCase('SMALL')]
+title Method: [aMethod.describedService__SEFF.entityName/]
+[generateBrackets()/]-> [aBasicComponent.entityName/] : [aMethod.describedService__SEFF.entityName/]
+[generateSeff(aBasicComponent, aRepository,aMethod.describedService__SEFF.entityName, '', false, aModusSmall)/]
+[/let]
 @enduml 
 		[/file] 
+[/let]
 [/let]
 [/template]
 
 [template public generateRepositoryText(aRepository: Repository, aSEFF: ResourceDemandingSEFF, aSystem: System)]
 User -> [aSEFF.basicComponent_ServiceEffectSpecification.entityName/] : [aSEFF.describedService__SEFF.entityName/]
-[startActionGeneration(getStartAction(aSEFF), aRepository, aSEFF.basicComponent_ServiceEffectSpecification.entityName, aSystem)/]
+[startActionGeneration(getStartAction(aSEFF), aRepository, aSEFF.basicComponent_ServiceEffectSpecification.entityName, aSystem, false)/]
 [/template]
 
-[template public generateSeff(comp : BasicComponent, repository : Repository , aMethodName : String, nextComponentName : String, aSystem: OclAny) post (trim())]
+[template public generateSeff(comp : BasicComponent, repository : Repository , aMethodName : String, nextComponentName : String, aSystem: OclAny, aModusSmall: Boolean) post (trim())]
 [for (seff : ServiceEffectSpecification | comp.serviceEffectSpecifications__BasicComponent)]
 [if (seff.describedService__SEFF.entityName.equalsIgnoreCase(aMethodName))]
 	[let componentName: String = if nextComponentName.equalsIgnoreCase('') then comp.entityName else nextComponentName endif]
 		[let startAction : StartAction = getStartAction(seff.oclAsType(ResourceDemandingBehaviour)) ]
 	[if not startAction.oclIsInvalid()]
-[startActionGeneration(startAction, repository, componentName, aSystem)/]
+[startActionGeneration(startAction, repository, componentName, aSystem, aModusSmall)/]
 	[/if] 
 		[/let]
 	[/let]
@@ -37,32 +42,42 @@ User -> [aSEFF.basicComponent_ServiceEffectSpecification.entityName/] : [aSEFF.d
 [/for]
 [/template]
 
-[template public startActionGeneration(startAction: StartAction, repository : Repository, componentName : String, aSystem: OclAny) post(trim())  {counter : Integer = 1;} ]
-[if checkLoop(startAction.id)]
-[if startAction.successor_AbstractAction.oclIsTypeOf(StopAction)]
-hnote over [componentName/] : do nothing
-[/if]
+[template public startActionGeneration(startAction: StartAction, repository : Repository, componentName : String, aSystem: OclAny, aModusSmall: Boolean) post(trim())  {counter : Integer = 1;} ]
+[let noLoop: Boolean = checkLoop(startAction.id)]
+[if noLoop]
 [if not startAction.successor_AbstractAction.oclIsTypeOf(StopAction)]
-[generateActions(startAction.successor_AbstractAction, repository, componentName, aSystem)/]
+[if aModusSmall]
+activate [componentName/]
+[/if]
+[generateActions(startAction.successor_AbstractAction, repository, componentName, aSystem, aModusSmall)/]
+[if aModusSmall]
+deactivate [componentName/]
 [/if]
 [/if]
+[/if]
+[if not noLoop]
+throw Loop Error
+[/if]
+[/let]
 [/template]
 
-[template private generateActions(action: AbstractAction, repository : Repository, componentName : String, aSystem: OclAny) post(trim())]
+[template private generateActions(action: AbstractAction, repository : Repository, componentName : String, aSystem: OclAny, aModusSmall: Boolean) post(trim())]
 [getInternalCall(action, componentName)/][
-getExternalCall(action, repository, componentName, aSystem)/][
-getBranchActionCall(action, repository, componentName, aSystem)/][
+getExternalCall(action, repository, componentName, aSystem, aModusSmall)/][
+getBranchActionCall(action, repository, componentName, aSystem, aModusSmall)/][
 generateSetVariableAction(action, componentName)/][
-generateForkAction(action, repository, componentName, aSystem)/][
-generateLoopAction(action, repository, componentName, aSystem)/]
+generateForkAction(action, repository, componentName, aSystem, aModusSmall)/][
+generateLoopAction(action, repository, componentName, aSystem, aModusSmall)/]
 [if not (action.successor_AbstractAction.oclIsInvalid() or  action.successor_AbstractAction.oclIsTypeOf(StopAction))]
-[generateActions(action.successor_AbstractAction, repository, componentName, aSystem)/]
+[generateActions(action.successor_AbstractAction, repository, componentName, aSystem, aModusSmall)/]
 [/if]
 [/template]
 
 [template private generateSetVariableAction(action: AbstractAction, componentName: String) post(trim())]
 [if action.oclIsTypeOf(SetVariableAction)]
-[componentName/] -> [componentName/] : Set Variable [action.entityName/]
+[let variableAction: SetVariableAction = action.oclAsType(SetVariableAction)]
+[componentName/] -> [componentName/] : Set Variable  [variableAction.entityName/]
+[/let]
 [/if]
 
 [/template]
@@ -71,7 +86,7 @@ generateLoopAction(action, repository, componentName, aSystem)/]
 [parseExternalComponent(content.role_ExternalService.entityName)/]
 [/template]
 
-[query private getInvalid(): System = invoke('org.eclipse.acceleo.module.palladio.common.ParsingUtil', 'getInvalid()', Sequence{})/]
+[query private generateBrackets(): String = '['/]
 [query private checkLoop(id:String): Boolean = invoke('org.eclipse.acceleo.module.palladio.common.LoopDetection', 'notContained(java.lang.String)', Sequence{id})/]
 [query public getMethod(component: BasicComponent, id : String):ResourceDemandingSEFF = component.eContents(ResourceDemandingSEFF) -> any(seff: ResourceDemandingSEFF | seff.id.equalsIgnoreCase(id))/]
 [query public getStartAction(behaviour : ResourceDemandingBehaviour) : StartAction = behaviour.eContents(StartAction) -> first()/]

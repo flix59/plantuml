@@ -8,7 +8,7 @@ public class GenerationListener implements IAcceleoTextGenerationListener{
 	@Override
 	public void textGenerated(AcceleoTextGenerationEvent event) {
 		// TODO Auto-generated method stub
-		System.out.print(event.getText());
+		// System.out.print(event.getText());
 	}
 
 	@Override

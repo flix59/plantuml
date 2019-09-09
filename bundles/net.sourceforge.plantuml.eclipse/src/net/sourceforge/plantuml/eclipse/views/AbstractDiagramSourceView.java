@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.eclipse.Activator;
 import net.sourceforge.plantuml.eclipse.utils.DiagramTextIteratorProvider;
 import net.sourceforge.plantuml.eclipse.utils.DiagramTextProvider;
 import net.sourceforge.plantuml.eclipse.utils.DiagramTextProvider2;
+import net.sourceforge.plantuml.eclipse.utils.ModusDiagramTextProvider;
 import net.sourceforge.plantuml.eclipse.utils.PlantumlConstants;
 import net.sourceforge.plantuml.util.DiagramModus;
 import net.sourceforge.plantuml.util.DiagramModusProvider;
@@ -478,16 +479,12 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 			return false;
 		}
 
-		final List<DiagramTextProvider> providers = initUpdating(selected);
+		currentKonfig = selected;
+		final List<DiagramTextProvider> providers = initProviders(selected);
 		final Map<String, Object> markerAttributes = new HashMap<String, Object>();
 
 		String generatedText = generateText(providers, selected, markerAttributes);
 		return handleGeneratedText(generatedText, selected, markerAttributes);
-	}
-
-	private List<DiagramTextProvider> initUpdating(SelectionModel selected) {
-		currentKonfig = selected;
-		return initProviders(selected);
 	}
 
 	private List<DiagramTextProvider> initProviders(SelectionModel selected) {
@@ -501,17 +498,7 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		return supportsPart(diagramTextProvider, selected.activePart)
 				&& (selected.selection == null || diagramTextProvider.supportsSelection(selected.selection));
 	}
-
-	private boolean handleGeneratedText(String diagramText, SelectionModel selected,
-			Map<String, Object> markerAttributes) {
-		if (diagramText != null) {
-			updateDiagramText(diagramText, selected.path, markerAttributes);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
+	
 	private String generateText(List<DiagramTextProvider> providers, SelectionModel selected,
 			Map<String, Object> markerAttributes) {
 		String diagramText = null;
@@ -523,6 +510,9 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 							selected.selection, markerAttributes);
 				}
 			} else {
+				if(provider instanceof ModusDiagramTextProvider) {
+					((ModusDiagramTextProvider) provider).setDiagramModus(this.modusProvider.getModus());
+				}
 				return getDiagramText(provider, selected.activePart, selected.selection);
 			}
 		}
@@ -545,4 +535,16 @@ public abstract class AbstractDiagramSourceView extends ViewPart implements Obse
 		}
 		return null;
 	}
+
+	private boolean handleGeneratedText(String diagramText, SelectionModel selected,
+			Map<String, Object> markerAttributes) {
+		if (diagramText != null) {
+			updateDiagramText(diagramText, selected.path, markerAttributes);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
 }

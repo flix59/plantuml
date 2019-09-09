@@ -21,15 +21,8 @@ public class SystemDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 
 	
 	public SystemDiagramTextProvider() {
-		initEndings();
 	}
 
-	@Override
-	public void initEndings() {
-		this.pathEndings = new LinkedList<String>();
-		this.pathEndings.add("system");
-		this.pathEndings.add("composite_diagram");
-	}
 
 	@Override
 	public void initPartTypes() {
@@ -64,12 +57,6 @@ public class SystemDiagramTextProvider extends AbstractPcmDiagramTextProvider {
 			e.printStackTrace();
 		} 
 		return null;
-	}
-
-	@Override
-	public String getDiagramText(IPath path) {
-		// TODO Auto-generated method stub
-		return notSelectedText;
 	}
 	
 	@Override

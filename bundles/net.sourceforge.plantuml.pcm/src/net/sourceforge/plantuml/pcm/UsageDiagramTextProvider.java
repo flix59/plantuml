@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.acceleo.module.palladio.basiccomponent.BasicComponentGenerator;
@@ -18,12 +19,6 @@ import org.palladiosimulator.pcm.usagemodel.impl.ScenarioBehaviourImpl;
 import org.palladiosimulator.pcm.usagemodel.presentation.UsagemodelEditor;
 
 public class UsageDiagramTextProvider extends AbstractPcmDiagramTextProvider{
-
-	@Override
-	public String getDiagramText(IPath path) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	@Override
 	public String getDiagramText(IEditorPart editorPart, ISelection selection, Map<String, Object> markerAttributes) {
@@ -43,7 +38,9 @@ public class UsageDiagramTextProvider extends AbstractPcmDiagramTextProvider{
 	private String generateText(EntryLevelSystemCallImpl sel) {
 		File targetFolder = new File("transformationen");
 		try {
-			EntryLevelSystemCallGeneration generator = new EntryLevelSystemCallGeneration(sel, targetFolder, new ArrayList<String>());
+			List<String> arguments = new ArrayList<String>();
+			arguments.add(this.getModus().name());
+			EntryLevelSystemCallGeneration generator = new EntryLevelSystemCallGeneration(sel, targetFolder, arguments);
 			String text = transform(generator, targetFolder);
 			return text;
 		} catch (IOException e) {
@@ -55,7 +52,9 @@ public class UsageDiagramTextProvider extends AbstractPcmDiagramTextProvider{
 	private String generateText(ScenarioBehaviourImpl selection) {
 		File targetFolder = new File("transformationen");
 		try {
-			UsageGeneration generator = new UsageGeneration(selection, targetFolder, new ArrayList<String>());
+			List<String> arguments = new ArrayList<String>();
+			arguments.add(this.getModus().name());
+			UsageGeneration generator = new UsageGeneration(selection, targetFolder, arguments);
 			String text = transform(generator, targetFolder);
 			return text;
 		} catch (IOException e) {
@@ -64,12 +63,6 @@ public class UsageDiagramTextProvider extends AbstractPcmDiagramTextProvider{
 		return null;
 	}
 
-	@Override
-	public void initEndings() {
-		this.pathEndings = new LinkedList<String>();
-		this.pathEndings.add("usagemodel");
-		this.pathEndings.add("usagemodel_diagram");
-	}
 
 	@Override
 	public void initPartTypes() {

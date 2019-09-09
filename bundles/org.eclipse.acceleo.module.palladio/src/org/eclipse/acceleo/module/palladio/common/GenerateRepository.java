@@ -26,7 +26,6 @@ import org.eclipse.emf.common.util.Monitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-
 /**
  * Entry point of the 'Generate' generation module.
  *
@@ -125,6 +124,7 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
             List<? extends Object> arguments) throws IOException {
         initialize(model, targetFolder, arguments);
         GenerationListener listener = new GenerationListener();
+        System.out.print(arguments.toString());
         this.addGenerationListener(listener);
         org.eclipse.acceleo.common.preference.AcceleoPreferences.switchQueryCache(false);
     }

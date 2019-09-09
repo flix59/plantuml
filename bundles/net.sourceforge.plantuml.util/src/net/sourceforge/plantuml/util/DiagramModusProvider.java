@@ -7,7 +7,7 @@ public class DiagramModusProvider extends Observable {
 	private DiagramModus modus;
 	
 	public DiagramModusProvider() {
-		this.modus = DiagramModus.SEQUENZDIAGRAMM;
+		this.modus = DiagramModus.SMALL;
 	}
 	
 	public void setModus(DiagramModus modus) {

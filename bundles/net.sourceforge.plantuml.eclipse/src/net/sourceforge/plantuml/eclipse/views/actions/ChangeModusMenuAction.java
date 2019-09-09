@@ -29,19 +29,19 @@ public class ChangeModusMenuAction extends Action implements Observer {
 	    
 	    private void changeModus() {
 	    	System.out.println("got notified in Menu: " + modusProvider.getModus());
-	    	if(modusProvider.getModus() == DiagramModus.CLASSDIAGRAMM) {
+	    	if(modusProvider.getModus() == DiagramModus.EXPRESSIV) {
 				this.setText(PlantumlConstants.CHANGE_MODUS_MENU_SEQ);
 				setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusSeq.png")));
-				modusProvider.setModus(DiagramModus.SEQUENZDIAGRAMM);
+				modusProvider.setModus(DiagramModus.SMALL);
 			} else {
 				this.setText(PlantumlConstants.CHANGE_MODUS_MENU_CLASS);
 				setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusClass.png")));
-				modusProvider.setModus(DiagramModus.CLASSDIAGRAMM);
+				modusProvider.setModus(DiagramModus.EXPRESSIV);
 			}
 	    }
 	    
 		private void updateModus() {
-			if(modusProvider.getModus() == DiagramModus.CLASSDIAGRAMM) {
+			if(modusProvider.getModus() == DiagramModus.EXPRESSIV) {
 				this.setText(PlantumlConstants.CHANGE_MODUS_MENU_CLASS);
 				setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusClass.png")));
 			} else {

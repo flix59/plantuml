@@ -23,4 +23,5 @@ Export-Package: org.eclipse.acceleo.module.palladio.basiccomponent,
  org.eclipse.acceleo.module.palladio.common,
  org.eclipse.acceleo.module.palladio.system,
  org.eclipse.acceleo.module.palladio.usage
+Import-Package: net.sourceforge.plantuml.util
 
