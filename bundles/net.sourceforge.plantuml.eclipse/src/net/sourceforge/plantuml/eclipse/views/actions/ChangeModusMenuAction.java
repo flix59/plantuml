@@ -32,7 +32,7 @@ public class ChangeModusMenuAction extends Action implements Observer {
 	    	if(modusProvider.getModus() == DiagramModus.EXPRESSIV) {
 				this.setText(PlantumlConstants.CHANGE_MODUS_MENU_SEQ);
 				setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusSeq.png")));
-				modusProvider.setModus(DiagramModus.SMALL);
+				modusProvider.setModus(DiagramModus.UML);
 			} else {
 				this.setText(PlantumlConstants.CHANGE_MODUS_MENU_CLASS);
 				setImageDescriptor(ImageDescriptor.createFromFile(ImageControlAction.class, ( "/icons/ModusClass.png")));

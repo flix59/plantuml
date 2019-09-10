@@ -87,8 +87,6 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		BasicComponent component = (BasicComponent) sel.eContainer();
 		arguments.add(component.getId());
 		arguments.add(sel.getId());
-		System.out.print("trest");
-		System.out.print(" tetst" + this.getModus().name());
 		arguments.add(this.getModus().name());
 		try {
 			GenerateRepository generator = new GenerateRepository(repository, targetFolder, arguments);

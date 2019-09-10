@@ -5,7 +5,7 @@
 [template public getInternalCall(action: AbstractAction, componentName : String,) post(trim())]
 [if action.oclIsTypeOf(InternalAction) ]
 [let exAction: InternalAction = action.oclAsType(InternalAction)]
-[componentName/] -> [componentName/] : [exAction.entityName/]
+":[componentName/]" -> ":[componentName/]" : [exAction.entityName/]
 [/let]
 [/if]
 [/template]

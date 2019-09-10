@@ -124,7 +124,6 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
             List<? extends Object> arguments) throws IOException {
         initialize(model, targetFolder, arguments);
         GenerationListener listener = new GenerationListener();
-        System.out.print(arguments.toString());
         this.addGenerationListener(listener);
         org.eclipse.acceleo.common.preference.AcceleoPreferences.switchQueryCache(false);
     }

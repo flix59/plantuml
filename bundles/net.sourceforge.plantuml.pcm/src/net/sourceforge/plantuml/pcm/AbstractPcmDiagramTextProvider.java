@@ -22,7 +22,7 @@ public abstract class AbstractPcmDiagramTextProvider extends AbstractEcoreClassD
 
 
 	public List<Class<?>> partTypes;
-	private DiagramModus modus = DiagramModus.SMALL;
+	private DiagramModus modus = DiagramModus.UML;
 
 	public DiagramModus getModus() {
 		return modus;

@@ -2,15 +2,15 @@
 [module generateForkAction('http://palladiosimulator.org/PalladioComponentModel/Repository/5.2', 'http://palladiosimulator.org/PalladioComponentModel/SEFF/5.2', 'http://palladiosimulator.org/PalladioComponentModel/5.2')]
 [import org::eclipse::acceleo::module::palladio::common::generate/]
 
-[template public generateForkAction(action : AbstractAction, repository :Repository, componentName: String, aSystem: OclAny, aModusSmall: Boolean) post(trim())]
+[template public generateForkAction(action : AbstractAction, repository :Repository, componentName: String, aSystem: OclAny, aModusUML: Boolean) post(trim())]
 [if action.oclIsTypeOf(ForkAction)]
 [let forkAction: ForkAction = action.oclAsType(ForkAction)]
 [let firstBehaviour: ForkedBehaviour = forkAction.synchronisingBehaviours_ForkAction.synchronousForkedBehaviours_SynchronisationPoint -> any(fb | true)]
 par Fork
-[startActionGeneration(getStartAction(firstBehaviour), repository, componentName, aSystem, aModusSmall)/]
+[startActionGeneration(getStartAction(firstBehaviour), repository, componentName, aSystem, aModusUML)/]
 [for (behaviour: ForkedBehaviour | forkAction.synchronisingBehaviours_ForkAction.synchronousForkedBehaviours_SynchronisationPoint -> reject(fb | fb = firstBehaviour))]
 else 
-[startActionGeneration(getStartAction(behaviour), repository, componentName, aSystem, aModusSmall)/]
+[startActionGeneration(getStartAction(behaviour), repository, componentName, aSystem, aModusUML)/]
 [/for]
 end
 [/let] 

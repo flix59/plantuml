@@ -12,10 +12,10 @@
 [let aMethod: ResourceDemandingSEFF = getMethod(aBasicComponent, aMethodID)]
 		[file ('generatedTransformation', false, 'UTF-8')]
 @startuml
-[let aModusSmall: Boolean = modus.equalsIgnoreCase('SMALL')]
+[let aModusUML: Boolean = modus.equalsIgnoreCase('UML')]
 title Method: [aMethod.describedService__SEFF.entityName/]
-[generateBrackets()/]-> [aBasicComponent.entityName/] : [aMethod.describedService__SEFF.entityName/]
-[generateSeff(aBasicComponent, aRepository,aMethod.describedService__SEFF.entityName, '', false, aModusSmall)/]
+[generateBrackets()/]-> ":[aBasicComponent.entityName/]" : [aMethod.describedService__SEFF.entityName/]
+[generateSeff(aBasicComponent, aRepository,aMethod.describedService__SEFF.entityName, '', false, aModusUML)/]
 [/let]
 @enduml 
 		[/file] 
@@ -23,18 +23,30 @@ title Method: [aMethod.describedService__SEFF.entityName/]
 [/let]
 [/template]
 
-[template public generateRepositoryText(aRepository: Repository, aSEFF: ResourceDemandingSEFF, aSystem: System)]
-User -> [aSEFF.basicComponent_ServiceEffectSpecification.entityName/] : [aSEFF.describedService__SEFF.entityName/]
-[startActionGeneration(getStartAction(aSEFF), aRepository, aSEFF.basicComponent_ServiceEffectSpecification.entityName, aSystem, false)/]
+[template public generateRepositoryText(aRepository: Repository, aSEFF: ResourceDemandingSEFF, aSystem: System, aModusUML: Boolean)]
+User -> ":[aSEFF.basicComponent_ServiceEffectSpecification.entityName/]" : [aSEFF.describedService__SEFF.entityName/]
+[if aModusUML ]
+activate ":[aSEFF.basicComponent_ServiceEffectSpecification.entityName/]"
+[/if]
+[startActionGeneration(getStartAction(aSEFF), aRepository, aSEFF.basicComponent_ServiceEffectSpecification.entityName, aSystem, aModusUML)/]
+[if aModusUML ]
+deactivate ":[aSEFF.basicComponent_ServiceEffectSpecification.entityName/]"
+[/if]
 [/template]
 
-[template public generateSeff(comp : BasicComponent, repository : Repository , aMethodName : String, nextComponentName : String, aSystem: OclAny, aModusSmall: Boolean) post (trim())]
+[template public generateSeff(comp : BasicComponent, repository : Repository , aMethodName : String, nextComponentName : String, aSystem: OclAny, aModusUML: Boolean) post (trim())]
 [for (seff : ServiceEffectSpecification | comp.serviceEffectSpecifications__BasicComponent)]
 [if (seff.describedService__SEFF.entityName.equalsIgnoreCase(aMethodName))]
 	[let componentName: String = if nextComponentName.equalsIgnoreCase('') then comp.entityName else nextComponentName endif]
 		[let startAction : StartAction = getStartAction(seff.oclAsType(ResourceDemandingBehaviour)) ]
 	[if not startAction.oclIsInvalid()]
-[startActionGeneration(startAction, repository, componentName, aSystem, aModusSmall)/]
+[if aModusUML ]
+activate ":[componentName/]"
+[/if]
+[startActionGeneration(startAction, repository, componentName, aSystem, aModusUML)/]
+[if aModusUML ]
+deactivate ":[componentName/]"
+[/if]
 	[/if] 
 		[/let]
 	[/let]
@@ -42,17 +54,14 @@ User -> [aSEFF.basicComponent_ServiceEffectSpecification.entityName/] : [aSEFF.d
 [/for]
 [/template]
 
-[template public startActionGeneration(startAction: StartAction, repository : Repository, componentName : String, aSystem: OclAny, aModusSmall: Boolean) post(trim())  {counter : Integer = 1;} ]
+[template public startActionGeneration(startAction: StartAction, repository : Repository, componentName : String, aSystem: OclAny, aModusUML: Boolean) post(trim())  {counter : Integer = 1;} ]
 [let noLoop: Boolean = checkLoop(startAction.id)]
 [if noLoop]
+[if startAction.successor_AbstractAction.oclIsTypeOf(StopAction) and not aModusUML]
+hnote over ":[componentName/]" : do nothing
+[/if]
 [if not startAction.successor_AbstractAction.oclIsTypeOf(StopAction)]
-[if aModusSmall]
-activate [componentName/]
-[/if]
-[generateActions(startAction.successor_AbstractAction, repository, componentName, aSystem, aModusSmall)/]
-[if aModusSmall]
-deactivate [componentName/]
-[/if]
+[generateActions(startAction.successor_AbstractAction, repository, componentName, aSystem, aModusUML)/]
 [/if]
 [/if]
 [if not noLoop]
@@ -61,22 +70,22 @@ throw Loop Error
 [/let]
 [/template]
 
-[template private generateActions(action: AbstractAction, repository : Repository, componentName : String, aSystem: OclAny, aModusSmall: Boolean) post(trim())]
+[template private generateActions(action: AbstractAction, repository : Repository, componentName : String, aSystem: OclAny, aModusUML: Boolean) post(trim())]
 [getInternalCall(action, componentName)/][
-getExternalCall(action, repository, componentName, aSystem, aModusSmall)/][
-getBranchActionCall(action, repository, componentName, aSystem, aModusSmall)/][
+getExternalCall(action, repository, componentName, aSystem, aModusUML)/][
+getBranchActionCall(action, repository, componentName, aSystem, aModusUML)/][
 generateSetVariableAction(action, componentName)/][
-generateForkAction(action, repository, componentName, aSystem, aModusSmall)/][
-generateLoopAction(action, repository, componentName, aSystem, aModusSmall)/]
+generateForkAction(action, repository, componentName, aSystem, aModusUML)/][
+generateLoopAction(action, repository, componentName, aSystem, aModusUML)/]
 [if not (action.successor_AbstractAction.oclIsInvalid() or  action.successor_AbstractAction.oclIsTypeOf(StopAction))]
-[generateActions(action.successor_AbstractAction, repository, componentName, aSystem, aModusSmall)/]
+[generateActions(action.successor_AbstractAction, repository, componentName, aSystem, aModusUML)/]
 [/if]
 [/template]
 
 [template private generateSetVariableAction(action: AbstractAction, componentName: String) post(trim())]
 [if action.oclIsTypeOf(SetVariableAction)]
 [let variableAction: SetVariableAction = action.oclAsType(SetVariableAction)]
-[componentName/] -> [componentName/] : Set Variable  [variableAction.entityName/]
+":[componentName/]" -> ":[componentName/]" : Set Variable  [variableAction.entityName/]
 [/let]
 [/if]
 
