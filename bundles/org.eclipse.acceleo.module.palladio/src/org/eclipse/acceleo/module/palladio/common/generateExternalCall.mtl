@@ -9,7 +9,7 @@
 	[if (aMethodName.size() > 0)]
 	[let providers: Sequence(BasicComponent) = selectPorviders(getAllProviders(repository), exAction)]
 [generateNextComponent(componentName, providers, aMethodName, exAction, repository, aSystem, aModusUML)/]
-	[/let] 
+	[/let]  
 	[/if] 
 	[/let]
 [/let]  

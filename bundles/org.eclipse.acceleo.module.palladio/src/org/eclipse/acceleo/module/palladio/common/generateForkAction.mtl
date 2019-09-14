@@ -13,7 +13,7 @@ else
 [startActionGeneration(getStartAction(behaviour), repository, componentName, aSystem, aModusUML)/]
 [/for]
 end
-[/let] 
+[/let]  
 [/let]
 [/if] 
 [/template] 
