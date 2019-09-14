@@ -40,6 +40,8 @@ deactivate ":[aSEFF.basicComponent_ServiceEffectSpecification.entityName/]"
 	[let componentName: String = if nextComponentName.equalsIgnoreCase('') then comp.entityName else nextComponentName endif]
 		[let startAction : StartAction = getStartAction(seff.oclAsType(ResourceDemandingBehaviour)) ]
 	[if not startAction.oclIsInvalid()]
+[let noLoop: Boolean = checkLoop(startAction.id)]
+[if noLoop]
 [if aModusUML ]
 activate ":[componentName/]"
 [/if]
@@ -47,6 +49,13 @@ activate ":[componentName/]"
 [if aModusUML ]
 deactivate ":[componentName/]"
 [/if]
+[/if]
+[if not noLoop]
+[if not aModusUML ]
+hnote over ":[componentName/]" : Loop detected Error
+[/if] 
+[/if]
+[/let]
 	[/if] 
 		[/let]
 	[/let]
@@ -55,19 +64,12 @@ deactivate ":[componentName/]"
 [/template]
 
 [template public startActionGeneration(startAction: StartAction, repository : Repository, componentName : String, aSystem: OclAny, aModusUML: Boolean) post(trim())  {counter : Integer = 1;} ]
-[let noLoop: Boolean = checkLoop(startAction.id)]
-[if noLoop]
 [if startAction.successor_AbstractAction.oclIsTypeOf(StopAction) and not aModusUML]
 hnote over ":[componentName/]" : do nothing
 [/if]
 [if not startAction.successor_AbstractAction.oclIsTypeOf(StopAction)]
 [generateActions(startAction.successor_AbstractAction, repository, componentName, aSystem, aModusUML)/]
 [/if]
-[/if]
-[if not noLoop]
-throw Loop Error
-[/if]
-[/let]
 [/template]
 
 [template private generateActions(action: AbstractAction, repository : Repository, componentName : String, aSystem: OclAny, aModusUML: Boolean) post(trim())]

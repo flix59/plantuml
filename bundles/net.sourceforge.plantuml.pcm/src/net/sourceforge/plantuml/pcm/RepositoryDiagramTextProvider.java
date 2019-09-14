@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.storage.Storage.StorageException;
 import org.eclipse.ui.IEditorPart;
 import org.palladiosimulator.pcm.repository.BasicComponent;
 import org.palladiosimulator.pcm.repository.impl.BasicComponentImpl;
@@ -29,14 +30,12 @@ import org.palladiosimulator.pcm.seff.impl.ResourceDemandingSEFFImpl;
 import de.uka.ipd.sdq.pcm.gmf.seff.part.SeffDiagramEditor;
 import de.uka.ipd.sdq.pcm.gmf.repository.part.PalladioComponentModelRepositoryDiagramEditor;
 
-
 public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvider {
-	
 
 	public RepositoryDiagramTextProvider() {
 		this.setEditorType(RepositoryEditor.class);
 	}
-	
+
 	@Override
 	public void initPartTypes() {
 		this.partTypes = new ArrayList<Class<?>>();
@@ -54,16 +53,17 @@ public class RepositoryDiagramTextProvider extends AbstractPcmDiagramTextProvide
 		if (!(selection instanceof IStructuredSelection)) {
 			return notSelectedText;
 		} else {
-			final Object sel = ((IStructuredSelection) selection).getFirstElement();
-			if (!(sel instanceof EObject) || isEcoreClassDiagramObject(sel)) {
-				return notSelectedText;
-			}
-			if (sel instanceof ResourceDemandingSEFFImpl) {
-				return getDiagramText((ResourceDemandingSEFFImpl) sel);
-			}
-			if (sel instanceof BasicComponentImpl) {
-				return getDiagramText((BasicComponentImpl) sel);
-			}
+				final Object sel = ((IStructuredSelection) selection).getFirstElement();
+				if (!(sel instanceof EObject) || isEcoreClassDiagramObject(sel)) {
+					return notSelectedText;
+				}
+				if (sel instanceof ResourceDemandingSEFFImpl) {
+					return getDiagramText((ResourceDemandingSEFFImpl) sel);
+				}
+				if (sel instanceof BasicComponentImpl) {
+					return getDiagramText((BasicComponentImpl) sel);
+				}
+
 		}
 		return notSelectedText;
 	}

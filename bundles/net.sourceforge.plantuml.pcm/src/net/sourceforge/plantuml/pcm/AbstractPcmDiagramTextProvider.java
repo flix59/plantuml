@@ -18,8 +18,8 @@ import net.sourceforge.plantuml.ecore.AbstractEcoreClassDiagramTextProvider;
 import net.sourceforge.plantuml.util.DiagramModus;
 
 public abstract class AbstractPcmDiagramTextProvider extends AbstractEcoreClassDiagramTextProvider implements ModusDiagramTextProvider{
-	protected static final String notSelectedText = "@startuml \n title not Implemented yet\n @enduml";
-
+	protected final String notSelectedText = "@startuml \n title not Implemented yet\n @enduml";
+	protected final String errorText = "@startuml \n title Error: Cycle detected in Repository model \n @enduml";
 
 	public List<Class<?>> partTypes;
 	private DiagramModus modus = DiagramModus.UML;
@@ -79,6 +79,9 @@ public abstract class AbstractPcmDiagramTextProvider extends AbstractEcoreClassD
 			return text;
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (StackOverflowError e) {
+			System.out.print(e.getMessage());
+			return this.errorText;
 		}
 		return null;
 	}

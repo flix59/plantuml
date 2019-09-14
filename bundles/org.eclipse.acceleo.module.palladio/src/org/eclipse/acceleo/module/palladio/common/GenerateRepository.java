@@ -101,7 +101,7 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
         GenerationListener listener = new GenerationListener();
         this.addGenerationListener(listener);
         LoopDetection.reset();
-        org.eclipse.acceleo.common.preference.AcceleoPreferences.switchQueryCache(false);
+        //org.eclipse.acceleo.common.preference.AcceleoPreferences.switchQueryCache(false);
     }
 
     /**
@@ -125,7 +125,7 @@ public class GenerateRepository extends AbstractAcceleoGenerator {
         initialize(model, targetFolder, arguments);
         GenerationListener listener = new GenerationListener();
         this.addGenerationListener(listener);
-        org.eclipse.acceleo.common.preference.AcceleoPreferences.switchQueryCache(false);
+        //org.eclipse.acceleo.common.preference.AcceleoPreferences.switchQueryCache(false);
     }
     
     /**
