@@ -1,21 +1,23 @@
 package org.eclipse.acceleo.module.palladio.common;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoopDetection {
-	private static List<String> startActionIds = new ArrayList<String>();
+	private static Map<String, Integer> startActionIds = new HashMap<String, Integer>();
 	
 	public static boolean notContained(String id) {
-		if(!startActionIds.contains(id)) {
-			addAction(id);
+		Integer count = startActionIds.get(id);
+		if(count == null) {
+			startActionIds.put(id, 1);
+			return true;
+		}
+		if(count < 10) {
+			startActionIds.put(id, count +1);
 			return true;
 		} else {
 			return false;
 		}
-	}
-	public static void addAction(String id) {
-		startActionIds.add(id);
 	}
 	
 	public static void reset() {

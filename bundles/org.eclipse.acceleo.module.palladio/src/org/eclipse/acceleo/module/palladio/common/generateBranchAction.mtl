@@ -9,7 +9,7 @@
 alt [runAllBranchTransitions(firstTransition, repository, componentName, aSystem, aModusUML, aBranchNumber)/]
 [let transitions : Sequence(AbstractBranchTransition) = branchAction.eContents(AbstractBranchTransition) -> reject(transition | transition = firstTransition)]
 [if transitions -> size() > 0]
-else [iterateAllTransitions(transitions, repository, componentName, aSystem, aModusUML, aBranchNumber)/]
+else [iterateAllTransitions(transitions, repository, componentName, aSystem, aModusUML, aBranchNumber + 1)/]
 [/if]
 [/let]
 [/let]   

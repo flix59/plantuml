@@ -41,7 +41,6 @@ deactivate ":[aSEFF.basicComponent_ServiceEffectSpecification.entityName/]"
 		[let startAction : StartAction = getStartAction(seff.oclAsType(ResourceDemandingBehaviour)) ]
 	[if not startAction.oclIsInvalid()]
 [let noLoop: Boolean = checkLoop(startAction.id + aBranchNumber)]
-[aBranchNumber/]
 [if noLoop]
 [if aModusUML ]
 activate ":[componentName/]"
