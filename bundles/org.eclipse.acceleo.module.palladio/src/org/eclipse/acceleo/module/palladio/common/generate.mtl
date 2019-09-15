@@ -15,7 +15,7 @@
 [let aModusUML: Boolean = modus.equalsIgnoreCase('UML')]
 title Method: [aMethod.describedService__SEFF.entityName/]
 [generateBrackets()/]-> ":[aBasicComponent.entityName/]" : [aMethod.describedService__SEFF.entityName/]
-[generateSeff(aBasicComponent, aRepository,aMethod.describedService__SEFF.entityName, '', false, aModusUML)/]
+[generateSeff(aBasicComponent, aRepository,aMethod.describedService__SEFF.entityName, '', false, aModusUML, 0)/]
 [/let]
 @enduml 
 		[/file] 
@@ -28,24 +28,25 @@ User -> ":[aSEFF.basicComponent_ServiceEffectSpecification.entityName/]" : [aSEF
 [if aModusUML ]
 activate ":[aSEFF.basicComponent_ServiceEffectSpecification.entityName/]"
 [/if]
-[startActionGeneration(getStartAction(aSEFF), aRepository, aSEFF.basicComponent_ServiceEffectSpecification.entityName, aSystem, aModusUML)/]
+[startActionGeneration(getStartAction(aSEFF), aRepository, aSEFF.basicComponent_ServiceEffectSpecification.entityName, aSystem, aModusUML, 0)/]
 [if aModusUML ]
 deactivate ":[aSEFF.basicComponent_ServiceEffectSpecification.entityName/]"
 [/if]
 [/template]
 
-[template public generateSeff(comp : BasicComponent, repository : Repository , aMethodName : String, nextComponentName : String, aSystem: OclAny, aModusUML: Boolean) post (trim())]
+[template public generateSeff(comp : BasicComponent, repository : Repository , aMethodName : String, nextComponentName : String, aSystem: OclAny, aModusUML: Boolean, aBranchNumber: Integer) post (trim())]
 [for (seff : ServiceEffectSpecification | comp.serviceEffectSpecifications__BasicComponent)]
 [if (seff.describedService__SEFF.entityName.equalsIgnoreCase(aMethodName))]
 	[let componentName: String = if nextComponentName.equalsIgnoreCase('') then comp.entityName else nextComponentName endif]
 		[let startAction : StartAction = getStartAction(seff.oclAsType(ResourceDemandingBehaviour)) ]
 	[if not startAction.oclIsInvalid()]
-[let noLoop: Boolean = checkLoop(startAction.id)]
+[let noLoop: Boolean = checkLoop(startAction.id + aBranchNumber)]
+[aBranchNumber/]
 [if noLoop]
 [if aModusUML ]
 activate ":[componentName/]"
 [/if]
-[startActionGeneration(startAction, repository, componentName, aSystem, aModusUML)/]
+[startActionGeneration(startAction, repository, componentName, aSystem, aModusUML, aBranchNumber)/]
 [if aModusUML ]
 deactivate ":[componentName/]"
 [/if]
@@ -63,24 +64,24 @@ hnote over ":[componentName/]" : Loop detected Error
 [/for]
 [/template]
 
-[template public startActionGeneration(startAction: StartAction, repository : Repository, componentName : String, aSystem: OclAny, aModusUML: Boolean) post(trim())  {counter : Integer = 1;} ]
+[template public startActionGeneration(startAction: StartAction, repository : Repository, componentName : String, aSystem: OclAny, aModusUML: Boolean, aBranchNumber: Integer) post(trim())  {counter : Integer = 1;} ]
 [if startAction.successor_AbstractAction.oclIsTypeOf(StopAction) and not aModusUML]
 hnote over ":[componentName/]" : do nothing
 [/if]
 [if not startAction.successor_AbstractAction.oclIsTypeOf(StopAction)]
-[generateActions(startAction.successor_AbstractAction, repository, componentName, aSystem, aModusUML)/]
+[generateActions(startAction.successor_AbstractAction, repository, componentName, aSystem, aModusUML, aBranchNumber)/]
 [/if]
 [/template]
 
-[template private generateActions(action: AbstractAction, repository : Repository, componentName : String, aSystem: OclAny, aModusUML: Boolean) post(trim())]
+[template private generateActions(action: AbstractAction, repository : Repository, componentName : String, aSystem: OclAny, aModusUML: Boolean, aBranchNumber: Integer) post(trim())]
 [getInternalCall(action, componentName)/][
-getExternalCall(action, repository, componentName, aSystem, aModusUML)/][
-getBranchActionCall(action, repository, componentName, aSystem, aModusUML)/][
+getExternalCall(action, repository, componentName, aSystem, aModusUML, aBranchNumber)/][
+getBranchActionCall(action, repository, componentName, aSystem, aModusUML, aBranchNumber)/][
 generateSetVariableAction(action, componentName)/][
-generateForkAction(action, repository, componentName, aSystem, aModusUML)/][
-generateLoopAction(action, repository, componentName, aSystem, aModusUML)/]
+generateForkAction(action, repository, componentName, aSystem, aModusUML, aBranchNumber)/][
+generateLoopAction(action, repository, componentName, aSystem, aModusUML, aBranchNumber)/]
 [if not (action.successor_AbstractAction.oclIsInvalid() or  action.successor_AbstractAction.oclIsTypeOf(StopAction))]
-[generateActions(action.successor_AbstractAction, repository, componentName, aSystem, aModusUML)/]
+[generateActions(action.successor_AbstractAction, repository, componentName, aSystem, aModusUML, aBranchNumber)/]
 [/if]
 [/template]
 

@@ -2,13 +2,13 @@
 [module generateLoopAction('http://palladiosimulator.org/PalladioComponentModel/5.2', 'http://palladiosimulator.org/PalladioComponentModel/Repository/5.2')]
 [import org::eclipse::acceleo::module::palladio::common::generate/]
 
-[template public generateLoopAction(anAbstractAction : AbstractAction, repository: Repository, componentName : String, aSystem: OclAny, aModusUML: Boolean)]
+[template public generateLoopAction(anAbstractAction : AbstractAction, repository: Repository, componentName : String, aSystem: OclAny, aModusUML: Boolean, aBranchNumber: Integer)]
 [if anAbstractAction.oclIsTypeOf(LoopAction)]
 	[let aLoopAction : LoopAction = anAbstractAction.oclAsType(LoopAction)]
 loop [aLoopAction.iterationCount_LoopAction.specification/] times
-[startActionGeneration(getStartAction(aLoopAction.bodyBehaviour_Loop), repository, componentName, aSystem, aModusUML)/]
+[startActionGeneration(getStartAction(aLoopAction.bodyBehaviour_Loop), repository, componentName, aSystem, aModusUML, aBranchNumber)/]
 end
 	[/let]
 [/if]  
-[/template] 
+[/template]  
  
